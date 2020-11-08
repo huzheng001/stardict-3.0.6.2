@@ -25,7 +25,7 @@
 #include <list>
 
 
-#define PLUGIN_SYSTEM_VERSION "3.0.6"
+#define PLUGIN_SYSTEM_VERSION "3.0.6.2"
 
 enum StarDictPlugInType {
 	StarDictPlugInType_UNKNOWN,
@@ -40,7 +40,7 @@ enum StarDictPlugInType {
 struct NetDictResponse;
 
 struct StarDictPluginSystemService {
-	typedef void (*get_http_response_func_t)(char *buffer, size_t buffer_len, gpointer userdata);
+	typedef void (*get_http_response_func_t)(const char *buffer, size_t buffer_len, gpointer userdata);
 	typedef void (*send_http_request_func_t)(const char* shost, const char* sfile, get_http_response_func_t callback_func, gpointer userdata);
 	send_http_request_func_t send_http_request;
 	typedef void (*show_url_func_t)(const char *url);

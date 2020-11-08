@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT([StarDict tools], 3.0.6, [http://www.stardict.org])
+AC_INIT([StarDict tools], 3.0.6.2, [http://stardict-4.sourceforge.net])
 AC_CONFIG_SRCDIR([src/stardict-editor.cpp])
 AC_CONFIG_AUX_DIR([.])
 AM_INIT_AUTOMAKE([tar-ustar dist-bzip2])
