@@ -7,7 +7,7 @@ type:
 make
 make install
 =============
-Gucharmap use gtk3 while stardict still use gtk2, so this plugin need to be disabled presently.
+Gucharmap use gtk3 while stardict still use gtk2, so this plugin need to be disabled presently. You needn't disable it on old system.
 Dictdotcn plugin is outdated and have no use now.
 Festival in Fedora linux have some problem and it will cause festival plugin crash, so we need to disable it presently(by --disable-festival). See: https://bugzilla.redhat.com/show_bug.cgi?id=242607
 In Debian linux, it have fixed this bug, so you can use it!
