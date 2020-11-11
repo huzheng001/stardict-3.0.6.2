@@ -25,7 +25,7 @@
 #include <algorithm>
 
 #ifdef _WIN32
-#define VERSION "3.0.6"
+#define VERSION "3.0.6.2"
 #  include <gdk/gdkwin32.h>
 #endif
 
@@ -582,6 +582,12 @@ void TopWin::on_main_menu_pluginmanage_activate(GtkMenuItem *menuitem, TopWin *o
 	gpAppFrame->PopupPluginManageDlg();
 }
 
+void TopWin::on_main_menu_keepabove_toggled(GtkCheckMenuItem *menuitem, TopWin *oTopWin)
+{
+	bool keepabove = gtk_check_menu_item_get_active(menuitem);
+	conf->set_bool_at("main_window/keep_above", keepabove);
+}
+
 void TopWin::on_main_menu_downloaddict_activate(GtkMenuItem *menuitem, TopWin *oTopWin)
 {
   show_url("http://stardict.huzheng.org");
@@ -589,7 +595,12 @@ void TopWin::on_main_menu_downloaddict_activate(GtkMenuItem *menuitem, TopWin *o
 
 void TopWin::on_main_menu_newversion_activate(GtkMenuItem *menuitem, TopWin *oTopWin)
 {
-  show_url("http://www.stardict.org");
+  show_url("http://stardict-4.sourceforge.net");
+}
+
+void TopWin::on_main_menu_donate_activate(GtkMenuItem *menuitem, TopWin *oTopWin)
+{
+  show_url("http://www.huzheng.org/donate.php");
 }
 
 void TopWin::on_main_menu_help_activate(GtkMenuItem *menuitem, TopWin *oTopWin)
@@ -603,6 +614,8 @@ void TopWin::on_main_menu_about_activate(GtkMenuItem *menuitem, TopWin *oTopWin)
 		"Hu Zheng <huzheng001@gmail.com>",
 		"Sergey <kubtek@gmail.com>",
 		"Evgeniy <dushistov@mail.ru>",
+		"Alex Murygin <murygin@aitoc.com>",
+		"Tao Wang <dancefire@gmail.com>",
 		"Opera Wang <wangvisual@sohu.com>",
 		"Ma Su'an <msa@wri.com.cn>",
 		NULL
@@ -618,9 +631,9 @@ void TopWin::on_main_menu_about_activate(GtkMenuItem *menuitem, TopWin *oTopWin)
 	gtk_show_about_dialog(GTK_WINDOW (gpAppFrame->window),
 			      "name", _("StarDict"),
 			      "version", VERSION,
-			      "website", "http://www.stardict.org",
+			      "website", "http://stardict-4.sourceforge.net",
 			      "comments", _("StarDict is an international dictionary for GNOME."),
-			      "copyright", "Copyright \xc2\xa9 1999 by Ma Su'an\n" "Copyright \xc2\xa9 2002 by Opera Wang\n" "Copyright \xc2\xa9 2003-2004 by Hu Zheng\n" "Copyright \xc2\xa9 2005-2006 by Hu Zheng, Evgeniy\n" "Copyright \xc2\xa9 2007-2011 by Hu Zheng, Sergey\n" "Copyright \xc2\xa9 2012-2014 by Hu Zheng",
+			      "copyright", "Copyright \xc2\xa9 1999 by Ma Su'an\n" "Copyright \xc2\xa9 2002 by Opera Wang\n" "Copyright \xc2\xa9 2003-2004 by Hu Zheng\n" "Copyright \xc2\xa9 2005-2006 by Hu Zheng, Evgeniy\n" "Copyright \xc2\xa9 2007-2011 by Hu Zheng, Sergey\n" "Copyright \xc2\xa9 2012-2020 by Hu Zheng",
 			      "authors", (const char **)authors,
 			      "documenters", (const char **)documenters,
 			      "translator-credits", strcmp (translator_credits, "translator_credits") != 0 ? translator_credits : NULL,
@@ -675,6 +688,15 @@ void TopWin::do_menu()
 		menuitem = gtk_separator_menu_item_new();
 		gtk_menu_shell_append(GTK_MENU_SHELL(MainMenu), menuitem);
 
+		menuitem = gtk_check_menu_item_new_with_mnemonic(_("_Keep window above"));
+		bool keepabove = conf->get_bool_at("main_window/keep_above");
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), keepabove);
+		g_signal_connect(G_OBJECT(menuitem), "toggled", G_CALLBACK(on_main_menu_keepabove_toggled), NULL);
+		gtk_menu_shell_append(GTK_MENU_SHELL(MainMenu), menuitem);
+
+		menuitem = gtk_separator_menu_item_new();
+		gtk_menu_shell_append(GTK_MENU_SHELL(MainMenu), menuitem);
+
 		menuitem = gtk_image_menu_item_new_with_mnemonic(_("Download dict_ionaries"));
 		image = gtk_image_new_from_stock(GTK_STOCK_NETWORK, GTK_ICON_SIZE_MENU);
 		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
@@ -687,6 +709,13 @@ void TopWin::do_menu()
 		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
 		gtk_image_menu_item_set_always_show_image (GTK_IMAGE_MENU_ITEM (menuitem), TRUE);
 		g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(on_main_menu_newversion_activate), NULL);
+		gtk_menu_shell_append(GTK_MENU_SHELL(MainMenu), menuitem);
+
+		menuitem = gtk_image_menu_item_new_with_mnemonic(_("D_onate"));
+		image = gtk_image_new_from_stock(GTK_STOCK_CDROM, GTK_ICON_SIZE_MENU);
+		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
+		gtk_image_menu_item_set_always_show_image (GTK_IMAGE_MENU_ITEM (menuitem), TRUE);
+		g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(on_main_menu_donate_activate), NULL);
 		gtk_menu_shell_append(GTK_MENU_SHELL(MainMenu), menuitem);
 		menuitem = gtk_separator_menu_item_new();
 		gtk_menu_shell_append(GTK_MENU_SHELL(MainMenu), menuitem);

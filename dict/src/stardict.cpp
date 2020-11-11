@@ -456,6 +456,9 @@ void AppCore::Create(const gchar *queryword)
 	} else {
 		oMidWin.oTextWin.ShowInitFailed();
 	}
+
+	bool keepabove = conf->get_bool_at("main_window/keep_above");
+	gtk_window_set_keep_above(GTK_WINDOW(window), keepabove);
 }
 
 void AppCore::on_mainwin_show_event(GtkWidget * window, AppCore *app)
@@ -2052,6 +2055,8 @@ void AppCore::Init(const gchar *queryword)
 {
 	conf->notify_add("/apps/stardict/preferences/main_window/hide_list",
 			 sigc::mem_fun(this, &AppCore::on_main_win_hide_list_changed));
+	conf->notify_add("/apps/stardict/preferences/main_window/keep_above",
+			 sigc::mem_fun(this, &AppCore::on_main_win_keep_above_changed));
 	conf->notify_add("/apps/stardict/preferences/dictionary/scan_selection",
 			 sigc::mem_fun(this, &AppCore::on_dict_scan_select_changed));
 	conf->notify_add("/apps/stardict/preferences/dictionary/scan_modifier_key",
@@ -2116,6 +2121,13 @@ void AppCore::on_main_win_hide_list_changed(const baseconfval* hideval)
 		gtk_widget_show(oMidWin.oLeftWin.vbox);
 		gtk_widget_show(oMidWin.oIndexWin.notebook);
 	}
+}
+
+void AppCore::on_main_win_keep_above_changed(const baseconfval* hideval)
+{
+	bool keepabove = static_cast<const confval<bool> *>(hideval)->val_;
+
+	gtk_window_set_keep_above(GTK_WINDOW(window), keepabove);
 }
 
 void AppCore::on_dict_scan_select_changed(const baseconfval* scanval)

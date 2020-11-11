@@ -118,6 +118,7 @@ AppConf::AppConf() :
 	// may store relative path
 	add_entry("/apps/stardict/preferences/main_window/skin", std::string());
 	add_entry("/apps/stardict/preferences/main_window/hide_on_startup", false);
+	add_entry("/apps/stardict/preferences/main_window/keep_above", false);
 	add_entry("/apps/stardict/preferences/main_window/search_while_typing", true);
 	add_entry("/apps/stardict/preferences/main_window/word_change_timeout", 300);
 	add_entry("/apps/stardict/preferences/main_window/showfirst_when_notfound", true);
