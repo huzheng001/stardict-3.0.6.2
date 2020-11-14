@@ -44,8 +44,8 @@ const int DEFAULT_WINDOW_HEIGHT=390;
 const int DEFAULT_HPANED_POS=120;
 #endif
 
-std::auto_ptr<AppConf> conf;
-std::auto_ptr<AppDirs> conf_dirs;
+std::unique_ptr<AppConf> conf;
+std::unique_ptr<AppDirs> conf_dirs;
 
 #ifdef _WIN32
 HINSTANCE stardictexe_hInstance;
@@ -111,7 +111,7 @@ AppConf::AppConf() :
 	add_entry("/apps/stardict/preferences/network/enable_netdict", false);
 #endif
 	// Default stardictd server.
-	add_entry("/apps/stardict/preferences/network/server", std::string(_("dict.stardict.org")));
+	add_entry("/apps/stardict/preferences/network/server", std::string(_("dict.stardict.net")));
 	add_entry("/apps/stardict/preferences/network/port", 2628);
 	add_entry("/apps/stardict/preferences/network/user", std::string());
 	add_entry("/apps/stardict/preferences/network/md5passwd", std::string());

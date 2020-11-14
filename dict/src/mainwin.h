@@ -269,7 +269,7 @@ public:
   std::string pronounceWord;
   ReadWordType readwordtype;
   TextWinQueryResult query_result;
-  std::auto_ptr<ArticleView> view;
+  std::unique_ptr<ArticleView> view;
 	gboolean search_from_beginning;
 	std::string find_text;
 	GtkEntry *eSearch;

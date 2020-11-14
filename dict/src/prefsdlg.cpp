@@ -1280,8 +1280,12 @@ void PrefsDlg::setup_network_netdict()
     gtk_table_attach(GTK_TABLE(table), label, 0, 1, 0, 1, GTK_FILL, GTK_FILL, 0, 0);
 	GtkWidget *comboboxentry = gtk_combo_box_text_new_with_entry();
 	gtk_table_attach(GTK_TABLE(table), comboboxentry, 1, 2, 0, 1, GTK_FILL, GTK_FILL, 0, 0);
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(comboboxentry), "dict.stardict.net");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(comboboxentry), "dict.stardict.me");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(comboboxentry), "dict.stardict.cc");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(comboboxentry), "dict.stardict.org");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(comboboxentry), "dict.stardict.cn");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(comboboxentry), "dict.stardict.site");
 	eStarDictServer=GTK_ENTRY(gtk_bin_get_child(GTK_BIN(comboboxentry)));
 	const std::string &server= conf->get_string_at("network/server");
 	gtk_entry_set_text(eStarDictServer, server.c_str());

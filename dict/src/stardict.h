@@ -117,14 +117,14 @@ public:
 #endif
 	GlobalHotkeys oHotkey;
 	FloatWin oFloatWin;
-	std::auto_ptr<TrayBase> oDockLet;
+	std::unique_ptr<TrayBase> oDockLet;
 
 	Libs oLibs;
 	TreeDicts oTreeDicts;
 	StarDictClient oStarDictClient;
 	StarDictPlugins *oStarDictPlugins;
 	HttpManager oHttpManager;
-	std::auto_ptr<hotkeys> unlock_keys;
+	std::unique_ptr<hotkeys> unlock_keys;
 	AppSkin oAppSkin;
 	ReadWord oReadWord;
 	FullTextTrans oFullTextTrans;
