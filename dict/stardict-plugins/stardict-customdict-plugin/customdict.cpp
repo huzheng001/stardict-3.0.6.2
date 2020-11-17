@@ -2,7 +2,7 @@
 #  include "config.h"
 #endif
 
-#include "advertisement.h"
+#include "customdict.h"
 #include <glib.h>
 #include <glib/gi18n.h>
 #include <glib/gstdio.h>
@@ -63,7 +63,7 @@ static void my_strstrip(gchar *str)
 	*p2 = '\0';
 }
 
-static char *build_dictdata(char type, const char *definition)
+static char *my_build_dictdata(char type, const char *definition)
 {
 	size_t fread_size;
 	guint32 size;
@@ -166,7 +166,7 @@ static bool load_dict(const char *filename)
 			step = 2;
 		} else if (step == 2) { // Definition
 			my_strstrip(p);
-			char *data = build_dictdata(dict_type, p);
+			char *data = my_build_dictdata(dict_type, p);
 			dictentry.datalist.push_back(data);
 			dictdata_list.push_back(data);
 			step = 3;
@@ -234,11 +234,11 @@ static void configure()
 DLLIMPORT bool stardict_plugin_init(StarDictPlugInObject *obj)
 {
 	if (strcmp(obj->version_str, PLUGIN_SYSTEM_VERSION)!=0) {
-		g_print("Error: User dict plugin version doesn't match!\n");
+		g_print(_("Error: User dict plugin version doesn't match!\n"));
 		return true;
 	}
 	obj->type = StarDictPlugInType_VIRTUALDICT;
-	obj->info_xml = g_strdup_printf("<plugin_info><name>%s</name><version>1.0</version><short_desc>%s</short_desc><long_desc>%s</long_desc><author>Hu Zheng &lt;huzheng001@gmail.com&gt;</author><website>http://www.stardict.org</website></plugin_info>", _("User Dict"), _("User virtual dictionary."), _("Show the user dictionary."));
+	obj->info_xml = g_strdup_printf("<plugin_info><name>%s</name><version>1.0</version><short_desc>%s</short_desc><long_desc>%s</long_desc><author>Hu Zheng &lt;huzheng001@gmail.com&gt;</author><website>http://stardict-4.sourceforge.net</website></plugin_info>", _("User Dict"), _("User virtual dictionary."), _("Show the user dictionary."));
 	obj->configure_func = configure;
 	plugin_info = obj->plugin_info;
 
@@ -255,8 +255,8 @@ DLLIMPORT bool stardict_virtualdict_plugin_init(StarDictVirtualDictPlugInObject 
 	obj->lookup_func = lookup;
 	obj->dict_name = _("User Dict");
 	datapath = plugin_info->datadir;
-	datapath += G_DIR_SEPARATOR_S "data" G_DIR_SEPARATOR_S "advertisement";
-	bool failed = load_dict((datapath + G_DIR_SEPARATOR_S "advertisement.txt").c_str());
+	datapath += G_DIR_SEPARATOR_S "data" G_DIR_SEPARATOR_S "customdict";
+	bool failed = load_dict((datapath + G_DIR_SEPARATOR_S "customdict.txt").c_str());
 	if (failed)
 		return true;
 	g_print(_("User dict plug-in loaded.\n"));
