@@ -42,7 +42,8 @@ build-stamp:
 		--disable-schemas-install \
 		--disable-gucharmap \
 		--disable-dictdotcn \
-		--disable-festival \
+		--disable-gnome-support \
+		--disable-scrollkeeper \
 		--disable-tools
 	$(MAKE)
 

@@ -1,12 +1,20 @@
-2020.11.
-StarDict-3.0.6.2 released.
+2020.11.23
+StarDict-3.0.6.2 (Nice) released.
 Provide Windows exe version.
-Small changes.
+Many small changes.
 
 2015.1.27
-StarDict-3.0.6 released.
+StarDict-3.0.6 (Cool) released.
 Update stardict_powerword_parsedata.cpp
 Small text changes.
+
+2015.1.26
+StarDict-3.0.1.2 (Good) released.
+Update stardict_powerword_parsedata.cpp
+Fix one bug in md5.h
+Fix one bug in gtktextviewpango.cpp
+Fix one bug in sockets.cpp
+Fix one bug in stardict.cpp as (MAX_MATCH_ITEM_PER_LIB*2).
 
 2014.6.23
 StarDict-3.0.5 (Nirvana) released.
@@ -18,6 +26,7 @@ Stardict-advertisement-plugin comes back!
 'P' dictionary content type identifier comes back!
 Add don't load bad dict option.
 Add show_ads checkbox for update-info-plugin.
+http://stardict-4.sourceforge.net is on-line now!
 Other small changes!
 
 2013.1.3
@@ -177,6 +186,7 @@ StarDict-2.4.7 (complete) released.
 Port to GPE (http://gpe.handhelds.org).
 Full-text search.
 Acrobat plug-in in Win32, thanks Dewolf Xue <dewolf_matri_x@msn.com>.
+Fix one addition line bug.
 Evgeniy's patches for special character search and other changes.
 Export word or text to file, thanks Mao-Yuan Kao <daniel.kao@gmail.com> for this patch.
 Add four Uyghur dictionaries, thanks Abdisalam Anatilim <anatilim@gmail.com>.
