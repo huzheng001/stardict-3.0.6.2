@@ -352,7 +352,7 @@ static void powerword_markup_add_text(const gchar *text, gssize length, std::str
 								if (*next == 'X') {
 									tag_str = toUtfPhonetic(n+1, tag_end - (n+1));
 								} else {
-									tag_str = toUtfPhonetic2(n+1, tag_end - (n+1));
+									tag_str = toUtfPhonetic2(n+1, tag_end - (n+1)); // Used by 金山词霸 2007 《美国传统词典[双解]》 dictionary.
 								}
 								g_string_append (str, tag_str);
 								g_free(tag_str);
@@ -688,7 +688,7 @@ DLLIMPORT bool stardict_plugin_init(StarDictPlugInObject *obj, IAppDirs* appDirs
 {
 	g_debug(_("Loading PowerWord data parsing plug-in..."));
 	if (strcmp(obj->version_str, PLUGIN_SYSTEM_VERSION)!=0) {
-		g_print("Error: PowerWord data parsing plugin version doesn't match!\n");
+		g_print(_("Error: PowerWord data parsing plugin version doesn't match!\n"));
 		return true;
 	}
 	obj->type = StarDictPlugInType_PARSEDATA;

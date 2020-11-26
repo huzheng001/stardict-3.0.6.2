@@ -29,7 +29,8 @@
 #include <gtk/gtk.h>
 #include <glib.h>
 
-#define DICTD_WEBSITE "www.dict.org"
+#define DICTD_WEBSITE "freedict2"
+//#define DICTD_WEBSITE "www.dict.org"
 //#define DICTD_WEBSITE "www.freedict.de"
 //#define DICTD_WEBSITE "www.mova.org"
 
@@ -141,8 +142,27 @@ void convert(char *basefilename)
 	fclose (indexfile);
 	buffer[stats.st_size] = '\0';
 
-	if (stat (dictfilename, &stats) == -1)
-	{
+	gchar dictdzfilename[1024];
+	sprintf(dictdzfilename, "%s.dz", dictfilename);
+	if (stat (dictdzfilename, &stats) == -1) {
+	} else {
+		gchar dictgzfilename[1024];
+		sprintf(dictgzfilename, "%s.gz", dictfilename);
+		gchar command[3000];
+		sprintf(command, "mv %s %s", dictdzfilename, dictgzfilename);
+		int result;
+		result = system(command);
+		if (result == -1) {
+			g_print("system() error!\n");
+		}
+		sprintf(command, "gunzip %s", dictgzfilename);
+		result = system(command);
+		if (result == -1) {
+			g_print("system() error!\n");
+		}
+	}
+
+	if (stat (dictfilename, &stats) == -1) {
 		printf("dict file not exist!\n");
 		return;
 	}
@@ -325,7 +345,7 @@ void convert(char *basefilename)
 	fprintf(ifofile, "StarDict's dict ifo file\nversion=2.4.2\nwordcount=%ld\nidxfilesize=%ld\nbookname=%s\nsametypesequence=m\n", wordcount, stats.st_size, basefilename);
 	fclose(ifofile);
 
-	gchar command[256];
+	gchar command[1024];
 	sprintf(command, "dictzip dictd_" DICTD_WEBSITE "_%s.dict", basefilename);
 	int result;
 	result = system(command);

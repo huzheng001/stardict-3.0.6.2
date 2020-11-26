@@ -2724,6 +2724,10 @@ void TransWin::Create(GtkWidget *notebook)
 	g_signal_connect(G_OBJECT(trans_button),"clicked", G_CALLBACK(on_translate_button_clicked), this);
 	gtk_box_pack_start(GTK_BOX(hbox), trans_button, false, false, 0);
 
+    GtkWidget *clear_button = gtk_button_new_from_stock(GTK_STOCK_CLEAR);
+    g_signal_connect(G_OBJECT(clear_button),"clicked", G_CALLBACK(on_clear_button_clicked), this);
+    gtk_box_pack_start(GTK_BOX(hbox), clear_button, false, false, 5);
+
 	result_textview = gtk_text_view_new();
 	gtk_text_view_set_editable(GTK_TEXT_VIEW(result_textview), FALSE);
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(result_textview), GTK_WRAP_WORD_CHAR);
@@ -2839,6 +2843,16 @@ void TransWin::on_translate_button_clicked(GtkWidget *widget, TransWin *oTransWi
 		text
 	);
 	g_free(text);
+}
+
+void TransWin::on_clear_button_clicked(GtkWidget *widget, TransWin *oTransWin)
+{
+    GtkTextBuffer* buffer;
+    buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(oTransWin->input_textview));
+    gtk_text_buffer_set_text(buffer, "", -1);
+    buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(oTransWin->result_textview));
+    gtk_text_buffer_set_text(buffer, "", -1);
+    gtk_widget_grab_focus(oTransWin->input_textview);
 }
 
 void TransWin::on_destroy(GtkWidget *object, TransWin* oTransWin)
