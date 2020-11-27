@@ -255,6 +255,19 @@ else
 fi
 AC_SUBST(DICTDOTCN_PLUGIN_DIR)
 
+
+AC_ARG_ENABLE([youdaodict],
+	AS_HELP_STRING([--disable-youdaodict],[Disable youdaodict netdict plugin (default: enabled)]),
+	[enable_youdaodict=$enableval],
+	[enable_youdaodict=yes])
+if test "x$enable_youdaodict" = "xyes" ; then
+	YOUDAODICT_PLUGIN_DIR="stardict-youdaodict-plugin"
+else
+	YOUDAODICT_PLUGIN_DIR=
+fi
+AC_SUBST(YOUDAODICT_PLUGIN_DIR)
+
+
 AC_ARG_ENABLE([customdict],
 	AS_HELP_STRING([--disable-customdict],[Disable customdict virtual dict plugin (default: enabled)]),
 	[enable_customdict=$enableval],
@@ -598,6 +611,7 @@ stardict-plugins/stardict-fortune-plugin/Makefile
 stardict-plugins/stardict-cal-plugin/Makefile
 stardict-plugins/stardict-qqwry-plugin/Makefile
 stardict-plugins/stardict-dictdotcn-plugin/Makefile
+stardict-plugins/stardict-youdaodict-plugin/Makefile
 stardict-plugins/stardict-update-info-plugin/Makefile
 stardict-plugins/stardict-spell-plugin/Makefile
 stardict-plugins/stardict-gucharmap-plugin/Makefile

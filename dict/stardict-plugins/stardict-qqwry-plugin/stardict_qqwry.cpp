@@ -34,6 +34,7 @@
 #endif
 
 static const StarDictPluginSystemInfo *plugin_info = NULL;
+static const StarDictPluginSystemService *plugin_service;
 
 
 /* concatenate path1 and path2 inserting a path separator in between if needed. */
@@ -49,21 +50,6 @@ static std::string build_path(const std::string& path1, const std::string& path2
 	else
 		res.append(path2);
 	return res;
-}
-
-static char *build_dictdata(char type, const char *definition)
-{
-	size_t len = strlen(definition);
-	guint32 size;
-	size = sizeof(char) + len + 1;
-	char *data = (char *)g_malloc(sizeof(guint32) + size);
-	char *p = data;
-	*((guint32 *)p)= size;
-	p += sizeof(guint32);
-	*p = type;
-	p++;
-	memcpy(p, definition, len+1);
-	return data;
 }
 
 #define REDIRECT_MODE_1 0x01
@@ -239,7 +225,7 @@ static void lookup(const char *text, char ***pppWord, char ****ppppWordData)
 		(*pppWord)[1] = NULL;
 		*ppppWordData = (gchar ***)g_malloc(sizeof(gchar **)*(1));
 		(*ppppWordData)[0] = (gchar **)g_malloc(sizeof(gchar *)*2);
-		(*ppppWordData)[0][0] =  build_dictdata('m', address.c_str());
+		(*ppppWordData)[0][0] =  plugin_service->build_dictdata('m', address.c_str());
 		(*ppppWordData)[0][1] = NULL;
 	}
 }
@@ -276,13 +262,14 @@ DLLIMPORT bool stardict_plugin_init(StarDictPlugInObject *obj, IAppDirs* appDirs
 {
 	g_debug(_("Loading QQWry plug-in..."));
 	if (strcmp(obj->version_str, PLUGIN_SYSTEM_VERSION)!=0) {
-		g_print("Error: QQWry plugin version doesn't match!\n");
+		g_print(_("Error: QQWry plugin version doesn't match!\n"));
 		return true;
 	}
 	obj->type = StarDictPlugInType_VIRTUALDICT;
 	obj->info_xml = g_strdup_printf("<plugin_info><name>%s</name><version>1.0</version><short_desc>%s</short_desc><long_desc>%s</long_desc><author>Hu Zheng &lt;huzheng001@gmail.com&gt;</author><website>http://stardict-4.sourceforge.net</website></plugin_info>", _("QQWry"), _("Show QQWry IP information."), _("Show address information by IP."));
 	obj->configure_func = configure;
 	plugin_info = obj->plugin_info;
+	plugin_service = obj->plugin_service;
 
 	return false;
 }
