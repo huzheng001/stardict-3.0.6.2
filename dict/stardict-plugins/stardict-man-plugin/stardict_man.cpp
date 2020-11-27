@@ -23,8 +23,11 @@
 #include <string>
 
 static const StarDictPluginSystemInfo *plugin_info = NULL;
-static bool need_prefix;
+static const StarDictPluginSystemService *plugin_service;
 static IAppDirs* gpAppDirs = NULL;
+
+static bool need_prefix;
+
 
 /* concatenate path1 and path2 inserting a path separator in between if needed. */
 static std::string build_path(const std::string& path1, const std::string& path2)
@@ -44,21 +47,6 @@ static std::string build_path(const std::string& path1, const std::string& path2
 static std::string get_cfg_filename()
 {
 	return build_path(gpAppDirs->get_user_config_dir(), "man.cfg");
-}
-
-static char *build_dictdata(char type, const char *definition)
-{
-	size_t len = strlen(definition);
-	guint32 size;
-	size = sizeof(char) + len + 1;
-	char *data = (char *)g_malloc(sizeof(guint32) + size);
-	char *p = data;
-	*((guint32 *)p)= size;
-	p += sizeof(guint32);
-	*p = type;
-	p++;
-	memcpy(p, definition, len+1);
-	return data;
 }
 
 static void terminal2pango(const char *t, std::string &pango)
@@ -118,8 +106,9 @@ static void terminal2pango(const char *t, std::string &pango)
 static void lookup(const char *text, char ***pppWord, char ****ppppWordData)
 {
 	std::string command;
-	if (need_prefix || g_str_has_prefix(text, "man ")) {
-		if (!g_str_has_prefix(text, "man ") || text[4] == '\0' || (g_ascii_isdigit(text[4]) && (text[5] == '\0' || (text[5] == ' ' && text[6] == '\0')))) {
+	if (need_prefix) {
+		bool have_prefix = g_str_has_prefix(text, "man ");
+		if (!have_prefix || (have_prefix && text[4] == '\0') || (have_prefix && g_ascii_isdigit(text[4]) && (text[5] == '\0')) || (have_prefix && g_ascii_isdigit(text[4]) && ((text[5] == ' ') && (text[6] == '\0')))) {
 			*pppWord = NULL;
 			return;
 		}
@@ -163,6 +152,16 @@ static void lookup(const char *text, char ***pppWord, char ****ppppWordData)
 	if (definition.empty()) {
 		*pppWord = NULL;
 		return;
+	} else {
+		size_t length1;
+		while (true) {
+			length1 = definition.length() -1;
+			if ((definition[length1] == '\n') || (definition[length1] == ' ')) {
+				definition.resize(length1, '\0');
+			} else {
+				break;
+			}
+		}
 	}
 	std::string pango;
 	terminal2pango(definition.c_str(), pango);
@@ -171,7 +170,7 @@ static void lookup(const char *text, char ***pppWord, char ****ppppWordData)
 	(*pppWord)[1] = NULL;
 	*ppppWordData = (gchar ***)g_malloc(sizeof(gchar **)*(1));
 	(*ppppWordData)[0] = (gchar **)g_malloc(sizeof(gchar *)*2);
-	(*ppppWordData)[0][0] =  build_dictdata('g', pango.c_str());
+	(*ppppWordData)[0][0] =  plugin_service->build_dictdata('g', pango.c_str());
 	(*ppppWordData)[0][1] = NULL;
 }
 
@@ -209,13 +208,14 @@ bool stardict_plugin_init(StarDictPlugInObject *obj, IAppDirs* appDirs)
 {
 	g_debug(_("Loading Man plug-in..."));
 	if (strcmp(obj->version_str, PLUGIN_SYSTEM_VERSION)!=0) {
-		g_print("Error: Man plugin version doesn't match!\n");
+		g_print(_("Error: Man plugin version doesn't match!\n"));
 		return true;
 	}
 	obj->type = StarDictPlugInType_VIRTUALDICT;
 	obj->info_xml = g_strdup_printf("<plugin_info><name>%s</name><version>1.0</version><short_desc>%s</short_desc><long_desc>%s</long_desc><author>Hu Zheng &lt;huzheng001@gmail.com&gt;</author><website>http://stardict-4.sourceforge.net</website></plugin_info>", _("Man"), _("Man virtual dictionary."), _("Show the man pages."));
 	obj->configure_func = configure;
 	plugin_info = obj->plugin_info;
+	plugin_service = obj->plugin_service;
 	gpAppDirs = appDirs;
 
 	return false;
