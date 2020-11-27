@@ -22,8 +22,11 @@
 #include <glib/gi18n.h>
 
 static const StarDictPluginSystemInfo *plugin_info = NULL;
-static std::string voice_engine;
 static IAppDirs* gpAppDirs = NULL;
+
+
+static std::string voice_engine;
+
 
 /* concatenate path1 and path2 inserting a path separator in between if needed. */
 static std::string build_path(const std::string& path1, const std::string& path2)
@@ -149,7 +152,7 @@ bool stardict_plugin_init(StarDictPlugInObject *obj, IAppDirs* appDirs)
 {
 	g_debug(_("Loading Festival plug-in..."));
 	if (strcmp(obj->version_str, PLUGIN_SYSTEM_VERSION)!=0) {
-		g_print("Error: Festival plugin version doesn't match!\n");
+		g_print(_("Error: Festival plugin version doesn't match!\n"));
 		return true;
 	}
 	obj->type = StarDictPlugInType_TTS;
