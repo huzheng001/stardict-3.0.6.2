@@ -284,6 +284,7 @@ void AppCore::Create(const gchar *queryword)
 	oStarDictPluginSystemService.show_url = show_url;
 	oStarDictPluginSystemService.set_news = set_news;
 	oStarDictPluginSystemService.encode_uri_string = common_encode_uri_string;
+    oStarDictPluginSystemService.build_dictdata = common_build_dictdata;
 	oStarDictPluginSystemService.netdict_save_cache_resp = netdict_save_cache_resp;
 	oStarDictPluginSystemService.show_netdict_resp = show_netdict_resp;
 	oStarDictPluginSystemService.lookup_dict = lookup_dict;

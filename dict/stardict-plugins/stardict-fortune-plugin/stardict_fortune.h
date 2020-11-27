@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hu Zheng <huzheng001@gmail.com>
+ * Copyright 2015 huzheng <huzheng001@gmail.com>
  *
  * This file is part of StarDict.
  *
@@ -17,27 +17,17 @@
  * along with StarDict.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _STARDICT_DICTDOTCN_PLUGIN_H_
-#define _STARDICT_DICTDOTCN_PLUGIN_H_
-
-#ifdef _WIN32
-#if BUILDING_DLL
-# define DLLIMPORT __declspec (dllexport)
-#else /* Not BUILDING_DLL */
-# define DLLIMPORT __declspec (dllimport)
-#endif /* Not BUILDING_DLL */
-#else
-# define DLLIMPORT
-#endif
+#ifndef _STARDICT_FORTUNE_PLUGIN_H_
+#define _STARDICT_FORTUNE_PLUGIN_H_
 
 #include "../../src/lib/plugin.h"
-#include "../../src/lib/netdictplugin.h"
+#include "../../src/lib/virtualdictplugin.h"
 #include "../../src/lib/iappdirs.h"
 
 extern "C" {
-	DLLIMPORT extern bool stardict_plugin_init(StarDictPlugInObject *obj, IAppDirs* appDirs);
-	DLLIMPORT extern void stardict_plugin_exit(void);
-	DLLIMPORT extern bool stardict_netdict_plugin_init(StarDictNetDictPlugInObject *obj);
+	extern bool stardict_plugin_init(StarDictPlugInObject *obj, IAppDirs* appDirs);
+	extern void stardict_plugin_exit(void);
+	extern bool stardict_virtualdict_plugin_init(StarDictVirtualDictPlugInObject *obj);
 }
 
 #endif

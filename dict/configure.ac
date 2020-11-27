@@ -245,6 +245,17 @@ else
 fi
 AC_SUBST(MAN_PLUGIN_DIR)
 
+AC_ARG_ENABLE([fortune],
+	AS_HELP_STRING([--disable-fortune],[Disable fortune virtual dict plugin (default: enabled)]),
+	[enable_fortune=$enableval],
+	[enable_fortune=yes])
+if test "x$enable_fortune" = "xyes" ; then
+	FORTUNE_PLUGIN_DIR="stardict-fortune-plugin"
+else
+	FORTUNE_PLUGIN_DIR=
+fi
+AC_SUBST(FORTUNE_PLUGIN_DIR)
+
 AC_ARG_ENABLE([cal],
 	AS_HELP_STRING([--disable-cal],[Disable cal virtual dict plugin (default: enabled)]),
 	[enable_cal=$enableval],
@@ -539,6 +550,7 @@ stardict-plugins/Makefile
 stardict-plugins/stardict-customdict-plugin/Makefile
 stardict-plugins/stardict-customdict-plugin/data/Makefile
 stardict-plugins/stardict-man-plugin/Makefile
+stardict-plugins/stardict-fortune-plugin/Makefile
 stardict-plugins/stardict-cal-plugin/Makefile
 stardict-plugins/stardict-qqwry-plugin/Makefile
 stardict-plugins/stardict-dictdotcn-plugin/Makefile
