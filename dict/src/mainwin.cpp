@@ -2131,7 +2131,7 @@ void TextWin::ShowInitFailed()
 	const char *link_pos = strstr(fmt, "%s%s%s");
 	LinksPosList links;
 	links.push_back(LinkDesc(g_utf8_strlen(fmt, link_pos - fmt),
-				 sizeof("http://www.stardict.org") - 1, "http://www.stardict.org"));
+				 sizeof("http://stardict-4.sourceforge.net") - 1, "http://stardict-4.sourceforge.net"));
 	glib::CharStr esc_fmt(g_markup_escape_text(fmt, -1));
 	std::string dirs_str;
 #ifdef _WIN32
@@ -2151,7 +2151,7 @@ void TextWin::ShowInitFailed()
 	glib::CharStr mes(
 		g_strdup_printf(get_impl(esc_fmt),
 				"<span foreground=\"blue\" underline=\"single\">",
-				"http://www.stardict.org",
+				"http://stardict-4.sourceforge.net",
 				"</span>",
 				dirs_str.c_str()));
 	view->clear();
@@ -3287,7 +3287,7 @@ void BottomWin::InternetSearchCallback(GtkButton *button, BottomWin *oBottomWin)
 #ifndef CONFIG_GPE
 void BottomWin::NewVersionCallback(GtkButton *button, BottomWin *oBottomWin)
 {
-  show_url("http://www.stardict.org");
+  show_url("http://stardict-4.sourceforge.net");
 }
 
 void BottomWin::DictManageCallback(GtkButton *button, BottomWin *oBottomWin)

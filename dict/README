@@ -15,7 +15,7 @@ general description
 StarDict is a Cross-Platform and international dictionary written in Gtk.
 It has powerful features such as "Glob-style pattern matching," "Scan selection word," "Fuzzy query," etc.
 
-http://www.stardict.org
+http://stardict-4.sourceforge.net
 
 first-level subdirectories
 --------------------------

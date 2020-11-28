@@ -22,7 +22,7 @@
 !define PORTABLEAPPNAME "StarDict Portable"
 !define APPNAME "StarDict"
 !define VER "3.0.6.2"
-!define WEBSITE "www.stardict.org"
+!define WEBSITE "stardict-4.sourceforge.net"
 !define DEFAULTEXE "stardict.exe"
 !define DEFAULTAPPDIR "StarDict"
 !define DEFAULTGTKDIR "GTK"
