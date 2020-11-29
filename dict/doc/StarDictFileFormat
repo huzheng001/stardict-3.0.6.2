@@ -250,7 +250,7 @@ version=2.4.8
 =====
 Then a line like this:
 url=/usr/share/stardict/dic/stardict-somedict-2.4.2/somedict.idx
-This line should have a ending '\n'.
+This line should has a ending '\n'.
 
 StarDict will try to create the .oft file at the same directory of 
 the .ifo file first, if failed, then try to create it at 
@@ -611,4 +611,4 @@ English.
 
 Hu Zheng <huzheng001@gmail.com>
 http://www.huzheng.org
-2007.4.24
+2020.11.28
