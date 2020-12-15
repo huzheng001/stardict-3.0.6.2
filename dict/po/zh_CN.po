@@ -418,7 +418,7 @@ msgid ""
 "CMU\thttp://www.speech.cs.cmu.edu\thttp://www.speech.cs.cmu.edu/cgi-bin/"
 "cmudict?in=%s\n"
 msgstr ""
-"StarDict.cn\thttp://www.stardict.cn\thttp://www.stardict.cn/query.php?q=%s\n"
+"StarDict.net\thttp://www.stardict.net\thttp://www.stardict.net/query.php?q=%s\n"
 "Dict.CN\thttp://dict.cn\thttp://dict.cn/search/?q=%s\n"
 "爱词霸\thttp://www.iciba.com\thttp://www.iciba.com/search?s=%s\n"
 "Dictionary.com\thttp://dictionary.reference.com\thttp://dictionary.reference."
@@ -1509,7 +1509,7 @@ msgstr "请输入合法邮箱地址。"
 
 #: ../src/prefsdlg.cpp:1267
 msgid "Enable _network dictionaries."
-msgstr "启用网络词典。"
+msgstr "启用网络词典(_N)。"
 
 #: ../src/prefsdlg.cpp:1279
 msgid "StarDict server:"
