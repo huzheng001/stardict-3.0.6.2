@@ -43,7 +43,7 @@
 enum DictListColumns {
 	DICTLIST_TYPE_COLUMN, // 0 G_TYPE_INT
 	DICTLIST_NAME_COLUMN, // 1
-	DICTLIST_WORD_COUNT_COLUMN, // 2 G_TYPE_LONG
+	DICTLIST_WORD_COUNT_COLUMN, // 2
 	DICTLIST_AUTHOR_COLUMN, // 3
 	DICTLIST_EMAIL_COLUMN, // 4
 	DICTLIST_WEB_SITE_COLUMN, // 5
@@ -57,7 +57,7 @@ enum DictListColumns {
 enum TreeDictColumns {
 	TREEDICT_ENABLED_COLUMN, // 0
 	TREEDICT_NAME_COLUMN, // 1
-	TREEDICT_WORD_COUNT_COLUMN, // 2 G_TYPE_LONG
+	TREEDICT_WORD_COUNT_COLUMN, // 2
 	TREEDICT_AUTHOR_COLUMN, // 3
 	TREEDICT_EMAIL_COLUMN, // 4
 	TREEDICT_WEB_SITE_COLUMN, // 5
@@ -70,14 +70,14 @@ enum TreeDictColumns {
 enum NetworkDictColumns {
 	NETWORKDICT_ID_COLUMN, // 0
 	NETWORKDICT_NAME_COLUMN, // 1
-	NETWORKDICT_WORD_COUNT_COLUMN, // 2 G_TYPE_LONG
+	NETWORKDICT_WORD_COUNT_COLUMN, // 2
 	NETWORKDICT_COLUMN_NUMBER
 };
 
 enum NetworkAddDlgDictColumns {
 	NETWORK_ADD_DLG_NAME_COLUMN, // 0
 	NETWORK_ADD_DLG_VISIBLE_COLUMN, // 1
-	NETWORK_ADD_DLG_WORD_COUNT_COLUMN, // 2 G_TYPE_LONG
+	NETWORK_ADD_DLG_WORD_COUNT_COLUMN, // 2
 	NETWORK_ADD_DLG_ID_COLUMN, // 3
 	NETWORK_ADD_DLG_NEED_LEVEL_COLUMN, // 4 G_TYPE_INT
 	NETWORK_ADD_DLG_COLUMN_NUMBER
@@ -88,7 +88,7 @@ enum DictManageColumns {
 	/* markup for row level 0, 1
 	 * dictionary name for row level 2 */
 	DICT_MANAGE_MARKUP_COLUMN, // 1
-	DICT_MANAGE_WORD_COUNT_COLUMN, // 2 G_TYPE_LONG
+	DICT_MANAGE_WORD_COUNT_COLUMN, // 2
 	/* plain text name for row level 0, 1
 	 * author for row level 2 */
 	DICT_MANAGE_AUTHOR_COLUMN, // 3
@@ -109,7 +109,7 @@ enum DictManageColumns {
 enum AddDictDlgColumns {
 	ADD_DICT_TYPE_COLUMN, // 0 G_TYPE_INT
 	ADD_DICT_NAME_COLUMN, // 1
-	ADD_DICT_WORD_COUNT_COLUMN, // 2 G_TYPE_LONG
+	ADD_DICT_WORD_COUNT_COLUMN, // 2
 	ADD_DICT_AUTHOR_COLUMN, // 3
 	ADD_DICT_EMAIL_COLUMN, // 4
 	ADD_DICT_WEB_SITE_COLUMN, // 5
@@ -165,8 +165,7 @@ void NetworkAddDlg::on_network_adddlg_add_button_clicked(GtkWidget *widget, Netw
 						msg = g_strdup_printf(_("Only level %d user can choose this dictionary!"), need_level);
 					} else {
 						msg = NULL;
-						gchar *bookname;
-						glong wordcount;
+						gchar *bookname, *wordcount;
 						gtk_tree_model_get (
 							model, &iter,
 							NETWORK_ADD_DLG_NAME_COLUMN, &bookname,
@@ -183,6 +182,7 @@ void NetworkAddDlg::on_network_adddlg_add_button_clicked(GtkWidget *widget, Netw
 							-1
 						);
 						g_free(bookname);
+						g_free(wordcount);
 						oNetworkAddDlg->dictdlg->network_dictmask_changed = true;
 					}
 				} else {
@@ -297,7 +297,7 @@ void NetworkAddDlg::Show(GtkWindow *parent_win)
 	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (sw), GTK_SHADOW_IN);
 	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 	gtk_widget_set_size_request (sw, 350, 230);
-	model = gtk_tree_store_new(NETWORK_ADD_DLG_COLUMN_NUMBER, G_TYPE_STRING, G_TYPE_BOOLEAN, G_TYPE_LONG, G_TYPE_STRING, G_TYPE_INT);
+	model = gtk_tree_store_new(NETWORK_ADD_DLG_COLUMN_NUMBER, G_TYPE_STRING, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT);
 	treeview = gtk_tree_view_new_with_model (GTK_TREE_MODEL(model));
 	g_object_unref (G_OBJECT (model));
 	gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (treeview), TRUE);
@@ -425,7 +425,7 @@ static void dirinfo_parse_end_element(GMarkupParseContext *context, const gchar 
 			Data->model, &iter,
 			NETWORK_ADD_DLG_NAME_COLUMN, Data->dict_bookname.c_str(),
 			NETWORK_ADD_DLG_VISIBLE_COLUMN, TRUE,
-			NETWORK_ADD_DLG_WORD_COUNT_COLUMN, (glong)atol(Data->dict_wordcount.c_str()),
+			NETWORK_ADD_DLG_WORD_COUNT_COLUMN, Data->dict_wordcount.c_str(),
 			NETWORK_ADD_DLG_ID_COLUMN, Data->dict_uid.c_str(),
 			NETWORK_ADD_DLG_NEED_LEVEL_COLUMN, need_level,
 			-1
@@ -628,12 +628,13 @@ static void create_dict_item_model(GtkTreeStore *model, GtkTreeIter *group_iter,
 			if (dictinfo.load_from_ifo_file(i->file_or_id.c_str(),
 				DictInfoType_NormDict)) {
 				gchar *markup = g_markup_escape_text(dictinfo.get_bookname().c_str(), dictinfo.get_bookname().length());
+				gchar *wc = g_strdup_printf("%d", dictinfo.get_wordcount());
 				gtk_tree_store_append(model, &dict_iter, &type_iter);
 				gtk_tree_store_set(
 					model, &dict_iter,
 					DICT_MANAGE_ENABLE_COLUMN, i->enable,
 					DICT_MANAGE_MARKUP_COLUMN, markup,
-					DICT_MANAGE_WORD_COUNT_COLUMN, (glong)dictinfo.get_wordcount(),
+					DICT_MANAGE_WORD_COUNT_COLUMN, wc,
 					DICT_MANAGE_AUTHOR_COLUMN, dictinfo.get_author().c_str(),
 					DICT_MANAGE_EMAIL_COLUMN, dictinfo.get_email().c_str(),
 					DICT_MANAGE_WEB_SITE_COLUMN, dictinfo.get_website().c_str(),
@@ -647,6 +648,7 @@ static void create_dict_item_model(GtkTreeStore *model, GtkTreeIter *group_iter,
 					-1
 				);
 				g_free(markup);
+				g_free(wc);
 			}
 		} else if (i->type == VIRTUAL_DICT) {
 			size_t iPlugin;
@@ -657,7 +659,7 @@ static void create_dict_item_model(GtkTreeStore *model, GtkTreeIter *group_iter,
 					model, &dict_iter,
 					DICT_MANAGE_ENABLE_COLUMN, i->enable,
 					DICT_MANAGE_MARKUP_COLUMN, dictname,
-					DICT_MANAGE_WORD_COUNT_COLUMN, (glong)0,
+					DICT_MANAGE_WORD_COUNT_COLUMN, "∞",
 					DICT_MANAGE_AUTHOR_COLUMN, "",
 					DICT_MANAGE_EMAIL_COLUMN, "",
 					DICT_MANAGE_WEB_SITE_COLUMN, "",
@@ -680,7 +682,7 @@ static void create_dict_item_model(GtkTreeStore *model, GtkTreeIter *group_iter,
 					model, &dict_iter,
 					DICT_MANAGE_ENABLE_COLUMN, i->enable,
 					DICT_MANAGE_MARKUP_COLUMN, dictname,
-					DICT_MANAGE_WORD_COUNT_COLUMN, (glong)0,
+					DICT_MANAGE_WORD_COUNT_COLUMN, "∞",
 					DICT_MANAGE_AUTHOR_COLUMN, "",
 					DICT_MANAGE_EMAIL_COLUMN, "",
 					DICT_MANAGE_WEB_SITE_COLUMN, "",
@@ -702,7 +704,7 @@ static void create_dict_item_model(GtkTreeStore *model, GtkTreeIter *group_iter,
 
 GtkTreeModel* DictManageDlg::create_dictmanage_tree_model()
 {
-	GtkTreeStore *model = gtk_tree_store_new(DICT_MANAGE_COLUMN_NUMBER, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_LONG, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_BOOLEAN, G_TYPE_INT, G_TYPE_BOOLEAN, G_TYPE_INT);
+	GtkTreeStore *model = gtk_tree_store_new(DICT_MANAGE_COLUMN_NUMBER, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_BOOLEAN, G_TYPE_INT, G_TYPE_BOOLEAN, G_TYPE_INT);
 	GtkTreeIter group_iter;
 	gchar *markup;
 	for (std::list<DictManageGroup>::iterator i = gpAppFrame->dictinfo.groups.begin(); i != gpAppFrame->dictinfo.groups.end(); ++i) {
@@ -738,12 +740,13 @@ public:
 			istreedict ? DictInfoType_TreeDict : DictInfoType_NormDict)) {
 			GtkTreeIter iter;
 			gtk_list_store_append(model, &iter);
+			gchar *wc = g_strdup_printf("%d", dictinfo.get_wordcount());
 			if(istreedict) {
 				gtk_list_store_set(
 					model, &iter,
 					TREEDICT_ENABLED_COLUMN, (!disable),
 					TREEDICT_NAME_COLUMN, dictinfo.get_bookname().c_str(),
-					TREEDICT_WORD_COUNT_COLUMN, (glong)dictinfo.get_wordcount(),
+					TREEDICT_WORD_COUNT_COLUMN, wc,
 					TREEDICT_AUTHOR_COLUMN, dictinfo.get_author().c_str(),
 					TREEDICT_EMAIL_COLUMN, dictinfo.get_email().c_str(),
 					TREEDICT_WEB_SITE_COLUMN, dictinfo.get_website().c_str(),
@@ -757,7 +760,7 @@ public:
 					model, &iter,
 					DICTLIST_TYPE_COLUMN, (gint)LOCAL_DICT,
 					DICTLIST_NAME_COLUMN, dictinfo.get_bookname().c_str(),
-					DICTLIST_WORD_COUNT_COLUMN, (glong)dictinfo.get_wordcount(),
+					DICTLIST_WORD_COUNT_COLUMN, wc,
 					DICTLIST_AUTHOR_COLUMN, dictinfo.get_author().c_str(),
 					DICTLIST_EMAIL_COLUMN, dictinfo.get_email().c_str(),
 					DICTLIST_WEB_SITE_COLUMN, dictinfo.get_website().c_str(),
@@ -768,6 +771,7 @@ public:
 					-1
 				);
 			}
+			g_free(wc);
 		}
 	}
 private:
@@ -782,7 +786,7 @@ GtkTreeModel* DictManageDlg::create_tree_model(TDictTree dicttree)
 		model = gtk_list_store_new(TREEDICT_COLUMN_NUMBER,
 			G_TYPE_BOOLEAN, // 0 - TREEDICT_ENABLED_COLUMN
 			G_TYPE_STRING, // 1 - TREEDICT_NAME_COLUMN
-			G_TYPE_LONG, // 2 - TREEDICT_WORD_COUNT_COLUMN
+			G_TYPE_STRING, // 2 - TREEDICT_WORD_COUNT_COLUMN
 			G_TYPE_STRING, // 3 - TREEDICT_AUTHOR_COLUMN
 			G_TYPE_STRING, // 4 - TREEDICT_EMAIL_COLUMN
 			G_TYPE_STRING, // 5 - TREEDICT_WEB_SITE_COLUMN
@@ -817,7 +821,7 @@ GtkTreeModel* DictManageDlg::create_tree_model(TDictTree dicttree)
 		model = gtk_list_store_new(DICTLIST_COLUMN_NUMBER,
 			G_TYPE_INT, // 0 - DICTLIST_TYPE_COLUMN
 			G_TYPE_STRING, // 1 - DICTLIST_NAME_COLUMN
-			G_TYPE_LONG,  // 2 - DICTLIST_WORD_COUNT_COLUMN
+			G_TYPE_STRING,  // 2 - DICTLIST_WORD_COUNT_COLUMN
 			G_TYPE_STRING, // 3 - DICTLIST_AUTHOR_COLUMN
 			G_TYPE_STRING, // 4 - DICTLIST_EMAIL_COLUMN
 			G_TYPE_STRING, // 5 - DICTLIST_WEB_SITE_COLUMN
@@ -859,7 +863,7 @@ GtkTreeModel* DictManageDlg::create_tree_model(TDictTree dicttree)
 				model, &iter,
 				DICTLIST_TYPE_COLUMN, (gint)VIRTUAL_DICT,
 				DICTLIST_NAME_COLUMN, dictname,
-				DICTLIST_WORD_COUNT_COLUMN, (glong)0,
+				DICTLIST_WORD_COUNT_COLUMN, "∞",
 				DICTLIST_AUTHOR_COLUMN, "",
 				DICTLIST_EMAIL_COLUMN, "",
 				DICTLIST_WEB_SITE_COLUMN, "",
@@ -879,7 +883,7 @@ GtkTreeModel* DictManageDlg::create_tree_model(TDictTree dicttree)
 				model, &iter,
 				DICTLIST_TYPE_COLUMN, (gint)NET_DICT,
 				DICTLIST_NAME_COLUMN, dictname,
-				DICTLIST_WORD_COUNT_COLUMN, (glong)0,
+				DICTLIST_WORD_COUNT_COLUMN, "∞",
 				DICTLIST_AUTHOR_COLUMN, "",
 				DICTLIST_EMAIL_COLUMN, "",
 				DICTLIST_WEB_SITE_COLUMN, "",
@@ -894,7 +898,7 @@ GtkTreeModel* DictManageDlg::create_tree_model(TDictTree dicttree)
 		model = gtk_list_store_new(NETWORKDICT_COLUMN_NUMBER,
 			G_TYPE_STRING,
 			G_TYPE_STRING,
-			G_TYPE_LONG
+			G_TYPE_STRING
 		);
 	}
 	return GTK_TREE_MODEL(model);
@@ -1152,8 +1156,7 @@ void DictManageDlg::show_dict_info()
 				return;
 			}
 		}
-		gchar *dictname, *author, *email, *website, *description, *date, *filename;
-		glong wordcount;
+		gchar *dictname, *wordcount, *author, *email, *website, *description, *date, *filename;
 		if(treeview == dict_list_treeview) {
 			gtk_tree_model_get (
 				model, &iter,
@@ -1206,7 +1209,7 @@ void DictManageDlg::show_dict_info()
 		GtkWidget *label = gtk_label_new(NULL);
 		gchar *markup;
 		markup = g_markup_printf_escaped (
-			"<b>%s:</b> %s\n<b>%s:</b> %ld\n<b>%s:</b> %s\n<b>%s:</b> %s\n<b>%s:</b> %s\n<b>%s:</b> %s\n<b>%s:</b> %s\n<b>%s:</b> %s",
+			"<b>%s:</b> %s\n<b>%s:</b> %s\n<b>%s:</b> %s\n<b>%s:</b> %s\n<b>%s:</b> %s\n<b>%s:</b> %s\n<b>%s:</b> %s\n<b>%s:</b> %s",
 			_("Dictionary Name"), dictname,
 			_("Word count"), wordcount,
 			_("Author"), author,
@@ -1216,6 +1219,7 @@ void DictManageDlg::show_dict_info()
 			_("Date"), date,
 			_("File name"), filename);
 		g_free(dictname);
+		g_free(wordcount);
 		g_free(author);
 		g_free(email);
 		g_free(website);
@@ -1935,7 +1939,7 @@ void DictManageDlg::show_add_dict_dialog(GtkTreeIter *parent_iter)
 		ADD_DICT_COLUMN_NUMBER,
 		G_TYPE_INT,
 		G_TYPE_STRING,
-		G_TYPE_LONG,
+		G_TYPE_STRING,
 		G_TYPE_STRING,
 		G_TYPE_STRING,
 		G_TYPE_STRING,
@@ -1968,8 +1972,7 @@ void DictManageDlg::show_add_dict_dialog(GtkTreeIter *parent_iter)
 		if (!added) {
 			DictManageItemType dicttype;
 			gint intdicttype;
-			gchar *bookname, *author, *email, *website, *description, *date, *type_str;
-			glong wordcount;
+			gchar *bookname, *wordcount, *author, *email, *website, *description, *date, *type_str;
 			gtk_tree_model_get (
 				dict_list_tree_model, &iter,
 				DICTLIST_TYPE_COLUMN, &intdicttype,
@@ -2001,6 +2004,7 @@ void DictManageDlg::show_add_dict_dialog(GtkTreeIter *parent_iter)
 				-1
 			);
 			g_free(bookname);
+			g_free(wordcount);
 			g_free(author);
 			g_free(email);
 			g_free(website);
@@ -2062,8 +2066,7 @@ void DictManageDlg::show_add_dict_dialog(GtkTreeIter *parent_iter)
 				gtk_tree_model_get_iter(GTK_TREE_MODEL(now_tree_model), &select_iter, (GtkTreePath *)(list->data));
 				DictManageItemType dicttype;
 				gint intdicttype;
-				gchar *bookname, *author, *email, *website, *description, *date, *file;
-				glong wordcount; 
+				gchar *bookname, *wordcount, *author, *email, *website, *description, *date, *file;
 				gtk_tree_model_get (
 					GTK_TREE_MODEL(now_tree_model), &select_iter,
 					ADD_DICT_TYPE_COLUMN, &intdicttype,
@@ -2098,6 +2101,7 @@ void DictManageDlg::show_add_dict_dialog(GtkTreeIter *parent_iter)
 					-1
 				);
 				g_free(bookname);
+				g_free(wordcount);
 				g_free(author);
 				g_free(email);
 				g_free(website);
@@ -2891,7 +2895,7 @@ static void dictmask_parse_end_element(GMarkupParseContext *context, const gchar
 			Data->model, &iter,
 			NETWORKDICT_ID_COLUMN, Data->uid.c_str(),
 			NETWORKDICT_NAME_COLUMN, Data->bookname.c_str(),
-			NETWORKDICT_WORD_COUNT_COLUMN, (glong)atol(Data->wordcount.c_str()),
+			NETWORKDICT_WORD_COUNT_COLUMN, Data->wordcount.c_str(),
 			-1
 		);
 	}

@@ -221,7 +221,7 @@
 
   <sect1 id="stardict-introduction"> 
     <title>Inleiding</title> 
-    <para><application>StarDict</application> is een cross-platform, internationaal woordenboek geschreven in Gtk2. Het heeft krachtige onderdelen zoals "Glob-stijl patroonherkenning", "Geselecteerd woord opzoeken", "Vaag zoeken" etc.</para> 
+    <para><application>StarDict</application> is een cross-platform, internationaal woordenboek geschreven in Gtk. Het heeft krachtige onderdelen zoals "Glob-stijl patroonherkenning", "Geselecteerd woord opzoeken", "Vaag zoeken" etc.</para> 
   </sect1>
 
   <sect1 id="stardict-getting-started">
@@ -2747,7 +2747,7 @@ plugin_dir=C:\\StarDict\\msvc_2008\\Debug
       </varlistentry>
       
       <varlistentry>
-      <term><replaceable>dictname</replaceable>.ind.oft
+      <term><replaceable>dictname</replaceable>.idx.oft
       </term>
       <listitem>
       <para>Cache for the index file. This file is created by <application>StarDict</application> to speedup dictionaries loading. You should not redistribute this file.</para>
@@ -2763,7 +2763,7 @@ plugin_dir=C:\\StarDict\\msvc_2008\\Debug
       </varlistentry>
       
       <varlistentry>
-      <term><replaceable>dictname</replaceable>.ind.clt
+      <term><replaceable>dictname</replaceable>.idx.clt
       </term>
       <listitem>
       <para>Collation file for the index file. This file is created by <application>StarDict</application> when you use collations to modify sorting order of words. You should not redistribute this file.</para>

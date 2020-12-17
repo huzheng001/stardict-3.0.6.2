@@ -221,7 +221,7 @@
 
   <sect1 id="stardict-introduction"> 
     <title>簡介</title> 
-    <para><application>星際譯王</application>是一個用Gtk2開發的跨平台的國際化的辭典軟體。她具有強大的功能，如“萬用字元匹配”，“掃描選擇”，“模糊查詢”，等等。</para> 
+    <para><application>星際譯王</application>是一個用Gtk開發的跨平台的國際化的辭典軟體。她具有強大的功能，如“萬用字元匹配”，“掃描選擇”，“模糊查詢”，等等。</para> 
   </sect1>
 
   <sect1 id="stardict-getting-started">
@@ -2747,7 +2747,7 @@ plugin_dir=C:\\StarDict\\msvc_2008\\Debug
       </varlistentry>
       
       <varlistentry>
-      <term><replaceable>dictname</replaceable>.ind.oft
+      <term><replaceable>dictname</replaceable>.idx.oft
       </term>
       <listitem>
       <para>Cache for the index file. This file is created by <application>StarDict</application> to speedup dictionaries loading. You should not redistribute this file.</para>
@@ -2763,7 +2763,7 @@ plugin_dir=C:\\StarDict\\msvc_2008\\Debug
       </varlistentry>
       
       <varlistentry>
-      <term><replaceable>dictname</replaceable>.ind.clt
+      <term><replaceable>dictname</replaceable>.idx.clt
       </term>
       <listitem>
       <para>Collation file for the index file. This file is created by <application>StarDict</application> when you use collations to modify sorting order of words. You should not redistribute this file.</para>
