@@ -221,7 +221,10 @@
 
   <sect1 id="stardict-introduction"> 
     <title>Inleiding</title> 
-    <para><application>StarDict</application> is een cross-platform, internationaal woordenboek geschreven in Gtk. Het heeft krachtige onderdelen zoals "Glob-stijl patroonherkenning", "Geselecteerd woord opzoeken", "Vaag zoeken" etc.</para> 
+    <para>
+	  <application>StarDict</application> is a Cross-Platform and international dictionary written in Gtk.
+      It has powerful features such as "Glob-style pattern matching," "Scan selected word," "Fuzzy query," etc.
+	</para> 
   </sect1>
 
   <sect1 id="stardict-getting-started">

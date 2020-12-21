@@ -221,7 +221,10 @@
 
   <sect1 id="stardict-introduction"> 
     <title>Вступ</title> 
-    <para><application>StarDict</application> це кросс-платформенний міжнародний словник написаний на Gtk. Він володіє рядом могутніх особливостей, таких як "пошук за шаблоном", "слідкування за виділеними словами", "нечіткий запит", і т.д.</para> 
+    <para>
+	  <application>StarDict</application> is a Cross-Platform and international dictionary written in Gtk.
+      It has powerful features such as "Glob-style pattern matching," "Scan selected word," "Fuzzy query," etc.
+	</para> 
   </sect1>
 
   <sect1 id="stardict-getting-started">

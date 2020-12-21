@@ -221,7 +221,10 @@
 
   <sect1 id="stardict-introduction"> 
     <title>简介</title> 
-    <para><application>星际译王</application>是一个用Gtk开发的跨平台的国际化的词典软件。她具有强大的功能，如“通配符匹配”，“扫描选择区”，“模糊查询”，等等。</para> 
+    <para>
+	  <application>StarDict</application> is a Cross-Platform and international dictionary written in Gtk.
+      It has powerful features such as "Glob-style pattern matching," "Scan selected word," "Fuzzy query," etc.
+	</para> 
   </sect1>
 
   <sect1 id="stardict-getting-started">

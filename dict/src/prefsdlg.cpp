@@ -2355,7 +2355,7 @@ void PrefsDlg::on_setup_floatwin_transparent_scale_changed(GtkRange *range, Pref
 
 void PrefsDlg::setup_floatwin_size_page()
 {
-	GtkWidget *vbox = prepare_page(GTK_NOTEBOOK(notebook), _("Settings"), GTK_STOCK_ZOOM_FIT);
+	GtkWidget *vbox = prepare_page(GTK_NOTEBOOK(notebook), _("Appearance"), GTK_STOCK_ZOOM_FIT);
 #if GTK_MAJOR_VERSION >= 3
 	GtkWidget *vbox1 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 6);
 #else
