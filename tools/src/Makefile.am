@@ -15,6 +15,7 @@ noinst_PROGRAMS = stardict-editor pydict2dic olddic2newdic oxford2dic directory2
 	dictbuilder tabfile2sql KangXi Unihan xiaoxuetang-ja wubi ydp2dict \
 	wordnet lingvosound2resdb resdatabase2dir dir2resdatabase stardict-index \
 	sd2foldoc	\
+	xml_meaning \
 	stardict-text2bin stardict-bin2text stardict-repair
 
 AM_CPPFLAGS = $(STARDICT_CFLAGS) -I$(top_builddir) -I$(top_srcdir)
@@ -80,6 +81,10 @@ mova_SOURCES = mova.cpp
 xmlinout_LDFLAGS =
 xmlinout_LDADD = $(STARDICT_LIBS)
 xmlinout_SOURCES = xmlinout.cpp
+
+xml_meaning_LDFLAGS =
+xml_meaning_LDADD = $(STARDICT_LIBS)
+xml_meaning_SOURCES = xml_meaning.cpp
 
 soothill_LDFLAGS =
 soothill_LDADD = $(STARDICT_LIBS)
@@ -278,9 +283,9 @@ stardict_repair_SOURCES = stardict_repair.cpp \
 	lib_binary_dict_generator.cpp lib_binary_dict_generator.h \
 	lib_dict_repair.cpp lib_dict_repair.h
 
-stardict_editor_CPPFLAGS = $(AM_CPPFLAGS) $(LIBXML_CFLAGS) $(COMMONLIB_CPPFLAGS)
+stardict_editor_CPPFLAGS = $(AM_CPPFLAGS) $(LIBXML_CFLAGS) $(EXPAT_CFLAGS) $(COMMONLIB_CPPFLAGS)
 stardict_editor_LDFLAGS =
-stardict_editor_LDADD = $(COMMONLIB_LIB) $(STARDICT_LIBS) $(LIBXML_LIBS)
+stardict_editor_LDADD = $(COMMONLIB_LIB) $(STARDICT_LIBS) $(LIBXML_LIBS) $(EXPAT_LIBS)
 stardict_editor_SOURCES = stardict-editor.cpp libtabfile.cpp libtabfile.h \
 	libbabylonfile.cpp libbabylonfile.h \
 	libstardict2txt.cpp libstardict2txt.h  \
@@ -290,7 +295,19 @@ stardict_editor_SOURCES = stardict-editor.cpp libtabfile.cpp libtabfile.h \
 	lib_stardict_text2bin.cpp lib_stardict_text2bin.h \
 	lib_textual_dict_parser.cpp lib_textual_dict_parser.h \
 	lib_binary_dict_generator.cpp lib_binary_dict_generator.h \
-	lib_dict_repair.cpp lib_dict_repair.h
+	lib_dict_repair.cpp lib_dict_repair.h \
+	bgl_babylon.cpp bgl_babylon.h \
+	bgl_babylonreader.cpp bgl_babylonreader.h \
+	bgl_dictbuilder.h bgl_dictreader.h \
+	bgl_stardictbuilder.cpp bgl_stardictbuilder.h \
+	libbgl2txt.cpp libbgl2txt.h \
+	charset_conv.cpp charset_conv.h compiler.h connector.cpp connector.h \
+	dsl_ipa.cpp dsl_ipa.h dsl_parser.cpp file.cpp file.h \
+	generator.cpp generator.h log.cpp log.h mapfile.cpp mapfile.h \
+	normalize_tags.cpp normalize_tags.h parser.cpp parser.h \
+	process.cpp process.h repository.h resource.h stardict_generator.cpp \
+	utils.cpp utils.h xml.cpp \
+	xml.h
 
 EXTRA_DIST = example.ifo example_treedict.tar.bz2 hanzim2dict.py \
 	jm2stardict.py uyghur2dict.py ncce2stardict.pl parse-oxford.perl \
