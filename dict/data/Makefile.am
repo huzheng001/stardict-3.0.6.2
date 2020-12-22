@@ -3,6 +3,11 @@ desktop_in_files = stardict.desktop.in
 desktop_DATA 	 = $(desktop_in_files:.desktop.in=.desktop)
 @INTLTOOL_DESKTOP_RULE@
 
+appdatadir = $(datadir)/appdata
+appdata_in_files = stardict.appdata.xml.in
+appdata_DATA = $(appdata_in_files:.xml.in=.xml)
+@INTLTOOL_XML_RULE@
+
 if GNOME_SUPPORT
 schemasdir	 = @GCONF_SCHEMA_FILE_DIR@
 schemas_in_files = stardict.schemas.in
@@ -19,17 +24,20 @@ man_MANS = stardict.1
 
 if GNOME_SUPPORT
 EXTRA_DIST = $(desktop_in_files)	\
+	$(appdata_in_files)		\
 	$(server_in_files)		\
 	$(schemas_in_files)		\
 	$(man_MANS)
 else
 EXTRA_DIST = $(desktop_in_files)        \
+	$(appdata_in_files)		\
         $(man_MANS)
 endif
 
 CLEANFILES = \
-	$(server_DATA) \
 	$(desktop_DATA)	\
+	$(appdata_DATA)	\
+	$(server_DATA) \
 	$(schemas_DATA)
 
 if GCONF_SCHEMAS_INSTALL
