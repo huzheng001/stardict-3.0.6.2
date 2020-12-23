@@ -53,6 +53,8 @@
 #define CODE_SYNTAX_ERROR            500 /* syntax, command not recognized */
 #define CODE_DENIED                  521
 #define CODE_DICTMASK_NOTSET         522
+#define CODE_USER_NOT_REGISTER       523
+
 
 unsigned int STARDICT::Cmd::next_seq = 1;
 
@@ -131,7 +133,7 @@ STARDICT::Cmd::Cmd(int cmd, ...)
 	case CMD_AUTH:
 		this->auth = new AuthInfo();
 		this->auth->user = va_arg( ap, const char * );
-		this->auth->passwd = va_arg( ap, const char * );
+		this->auth->md5saltpasswd = va_arg( ap, const char * );
 		break;
 	case CMD_LOOKUP:
 	{
@@ -494,11 +496,11 @@ void StarDictClient::set_server(const char *host, int port)
     }
 }
 
-void StarDictClient::set_auth(const char *user, const char *md5passwd)
+void StarDictClient::set_auth(const char *user, const char *md5saltpasswd)
 {
-    if (user_ != user || md5passwd_ != md5passwd) {
+    if (user_ != user || md5saltpasswd_ != md5saltpasswd) {
         user_ = user;
-        md5passwd_ = md5passwd;
+        md5saltpasswd_ = md5saltpasswd;
         clean_all_cache();
     }
 }
@@ -558,8 +560,8 @@ void StarDictClient::send_commands(int num, ...)
         c = new STARDICT::Cmd(STARDICT::CMD_CLIENT, "StarDict Linux");
 #endif
         cmdlist.push_back(c);
-        if (!user_.empty() && !md5passwd_.empty()) {
-            c = new STARDICT::Cmd(STARDICT::CMD_AUTH, user_.c_str(), md5passwd_.c_str());
+        if (!user_.empty() && !md5saltpasswd_.empty()) {
+            c = new STARDICT::Cmd(STARDICT::CMD_AUTH, user_.c_str(), md5saltpasswd_.c_str());
             cmdlist.push_back(c);
         }
     }
@@ -599,8 +601,8 @@ void StarDictClient::try_cache_or_send_commands(int num, ...)
         c = new STARDICT::Cmd(STARDICT::CMD_CLIENT, "StarDict Linux");
 #endif
         cmdlist.push_back(c);
-        if (!user_.empty() && !md5passwd_.empty()) {
-            c = new STARDICT::Cmd(STARDICT::CMD_AUTH, user_.c_str(), md5passwd_.c_str());
+        if (!user_.empty() && !md5saltpasswd_.empty()) {
+            c = new STARDICT::Cmd(STARDICT::CMD_AUTH, user_.c_str(), md5saltpasswd_.c_str());
             cmdlist.push_back(c);
         }
     }
@@ -651,7 +653,7 @@ void StarDictClient::request_command()
 			int i;
 			MD5Init(&ctx);
 			MD5Update(&ctx, (const unsigned char*)cmd_reply.daemonStamp.c_str(), cmd_reply.daemonStamp.length());
-			MD5Update(&ctx, (const unsigned char*)(c->auth->passwd.c_str()), c->auth->passwd.length());
+			MD5Update(&ctx, (const unsigned char*)(c->auth->md5saltpasswd.c_str()), c->auth->md5saltpasswd.length());
 			MD5Final(digest, &ctx );
 			for (i = 0; i < 16; i++)
 				sprintf( hex+2*i, "%02x", digest[i] );
@@ -709,7 +711,7 @@ void StarDictClient::on_resolved(gpointer data, bool resolved, in_addr_t sa_)
 	static bool showed_once = false;
 	if (!showed_once) {
 		showed_once = true;
-	        gchar *mes = g_strdup_printf("Can not reslove %s: %s\n",
+	        gchar *mes = g_strdup_printf(_("Can not reslove %s: %s\n"),
                          oStarDictClient->host_.c_str(), Socket::get_error_msg().c_str());
         	on_error_.emit(mes);
 	        g_free(mes);
@@ -725,7 +727,7 @@ void StarDictClient::on_resolved(gpointer data, bool resolved, in_addr_t sa_)
     oStarDictClient->sd_ = Socket::socket();
 
     if (oStarDictClient->sd_ == -1) {
-        std::string str = "Can not create socket: " + Socket::get_error_msg();
+        std::string str = _("Can not create socket: ") + Socket::get_error_msg();
         on_error_.emit(str.c_str());
         return;
     }
@@ -739,8 +741,7 @@ void StarDictClient::on_connected(gpointer data, bool succeeded)
 	static bool showed_once = false;
 	if (!showed_once) {
 		showed_once = true;
-	        gchar *mes = g_strdup_printf("Can not connect to %s: %s\n",
-                         oStarDictClient->host_.c_str(), Socket::get_error_msg().c_str());
+	        gchar *mes = g_strdup_printf(_("Can not connect to %s: %s\n"), oStarDictClient->host_.c_str(), Socket::get_error_msg().c_str());
         	on_error_.emit(mes);
 	        g_free(mes);
 	}
@@ -762,7 +763,7 @@ void StarDictClient::on_connected(gpointer data, bool succeeded)
     if (err) {
         g_io_channel_unref(oStarDictClient->channel_);
         oStarDictClient->channel_ = NULL;
-        gchar *str = g_strdup_printf("Unable to set the channel as non-blocking: %s", err->message);
+        gchar *str = g_strdup_printf(_("Unable to set the channel as non-blocking: %s"), err->message);
         on_error_.emit(str);
         g_free(str);
         g_error_free(err);
@@ -821,12 +822,12 @@ gboolean StarDictClient::on_io_in_event(GIOChannel *ch, GIOCondition cond,
     StarDictClient *stardict_client = static_cast<StarDictClient *>(user_data);
 
     if (!stardict_client->channel_) {
-        //g_warning("No channel available\n");
+        //g_warning(_("No channel available\n"));
         return FALSE;
     }
     if (cond & G_IO_ERR) {
         /*gchar *mes =
-            g_strdup_printf("Connection failed to the dictionary server at %s:%d",
+            g_strdup_printf(_("Connection failed to the dictionary server at %s:%d"),
                     stardict_client->host_.c_str(), stardict_client->port_);
         on_error_.emit(mes);
         g_free(mes);*/
@@ -847,7 +848,7 @@ gboolean StarDictClient::on_io_in_event(GIOChannel *ch, GIOCondition cond,
             res = g_io_channel_read_chars(stardict_client->channel_, stardict_client->size_data+(stardict_client->size_count-stardict_client->size_left), stardict_client->size_left, &bytes_read, &err);
             if (res == G_IO_STATUS_ERROR || res == G_IO_STATUS_EOF) {
                 if (err) {
-                    gchar *str = g_strdup_printf("Error while reading reply from server: %s", err->message);
+                    gchar *str = g_strdup_printf(_("Error while reading reply from server: %s"), err->message);
                     on_error_.emit(str);
                     g_free(str);
                     g_error_free(err);
@@ -867,11 +868,10 @@ gboolean StarDictClient::on_io_in_event(GIOChannel *ch, GIOCondition cond,
             else if (stardict_client->reading_type_ == READ_STRING)
                 g_io_channel_set_line_term(stardict_client->channel_, "", 1);
 
-            res = g_io_channel_read_line(stardict_client->channel_, &line,
-                             &len, &term, &err); // May be security bug as no max length, but gtk should has fixed it!
+            res = g_io_channel_read_line(stardict_client->channel_, &line, &len, &term, &err); // May be security bug as no max length, but gtk should has fixed it!
             if (res == G_IO_STATUS_ERROR || res == G_IO_STATUS_EOF) {
                 if (err) {
-                    gchar *str = g_strdup_printf("Error while reading reply from server: %s", err->message);
+                    gchar *str = g_strdup_printf(_("Error while reading reply from server: %s"), err->message);
                     on_error_.emit(str);
                     g_free(str);
                     g_error_free(err);
@@ -899,16 +899,16 @@ gboolean StarDictClient::on_io_in_event(GIOChannel *ch, GIOCondition cond,
 
 int StarDictClient::parse_banner(gchar *line)
 {
-    int status;
-    status = atoi(line);
-    if (status != CODE_HELLO) {
-        if (status == CODE_TEMPORARILY_UNAVAILABLE) {
-            g_print("Server temporarily unavailable!\n");
-        } else {
-            g_print("Unexpected status code %d\n", status);
-        }
-        return 0;
-    }
+	int status;
+	status = atoi(line);
+	if (status != CODE_HELLO) {
+		if (status == CODE_TEMPORARILY_UNAVAILABLE) {
+ 			g_print(_("Server temporarily unavailable!\n"));
+		} else {
+			g_print(_("Unexpected status code %d\n"), status);
+		}
+		return 0;
+	}
     char *p;
     p = strrchr(line, ' ');
     if (p) {
@@ -923,7 +923,7 @@ int StarDictClient::parse_command_client(gchar *line)
     int status;
     status = atoi(line);
     if (status != CODE_OK) {
-	gchar *str = g_strdup_printf("Client denied: %s", line);
+	gchar *str = g_strdup_printf(_("Client denied: %s"), line);
 	on_error_.emit(str);
 	g_free(str);
         return 0;
@@ -986,7 +986,7 @@ int StarDictClient::parse_command_setdictmask(gchar *line)
     int status;
     status = atoi(line);
     if (status != CODE_OK) {
-        gchar *str = g_strdup_printf("Set Dict Mask failed: %s", line);
+        gchar *str = g_strdup_printf(_("Set Dict Mask failed: %s"), line);
         on_error_.emit(str);
         g_free(str);
         return 0;
@@ -998,23 +998,31 @@ int StarDictClient::parse_command_setdictmask(gchar *line)
 
 int StarDictClient::parse_command_getdictmask(STARDICT::Cmd* cmd, gchar *buf)
 {
-    if (cmd->reading_status == 0) {
-        int status;
-        status = atoi(buf);
-        if (status != CODE_OK) {
-	    g_free(buf);
-            on_error_.emit(_("You haven't setup the account. Please open the \"Net Dict\" page in the Preferences dialog and register an account first."));
-            return 1; // Cool.
-        }
+	if (cmd->reading_status == 0) {
+	int status;
+	status = atoi(buf);
+	if (status != CODE_OK) {
+		if (status == CODE_USER_NOT_REGISTER) {
+			g_free(buf);
+			on_error_.emit(_("You haven't setup the account. Please open the \"Net Dict\" page in the Preferences dialog and register an account first."));
+			return 1; // Cool.
+		} else {
+			gchar *str = g_strdup_printf(_("Get Dict Mask failed: %s"), buf);
+			g_free(buf);
+			on_error_.emit(str);
+			g_free(str);
+			return 0;
+		}
+	}
 	g_free(buf);
 	cmd->reading_status = 1;
 	reading_type_ = READ_STRING;
-    } else if (cmd->reading_status == 1) {
-        on_getdictmask_end_.emit(buf);
-        save_cache_str(cmd->data, buf);
-        return 1;
-    }
-    return 2;
+	} else if (cmd->reading_status == 1) {
+		on_getdictmask_end_.emit(buf);
+		save_cache_str(cmd->data, buf);
+		return 1;
+	}
+	return 2;
 }
 
 int StarDictClient::parse_command_dirinfo(STARDICT::Cmd* cmd, gchar *buf)
@@ -1023,7 +1031,7 @@ int StarDictClient::parse_command_dirinfo(STARDICT::Cmd* cmd, gchar *buf)
         int status;
         status = atoi(buf);
         if (status != CODE_OK) {
-            gchar *str = g_strdup_printf("Get dir info failed: %s", buf);
+            gchar *str = g_strdup_printf(_("Get dir info failed: %s"), buf);
             g_free(buf);
             on_error_.emit(str);
             g_free(str);
@@ -1046,7 +1054,7 @@ int StarDictClient::parse_command_dictinfo(STARDICT::Cmd* cmd, gchar *buf)
         int status;
         status = atoi(buf);
         if (status != CODE_OK) {
-            gchar *str = g_strdup_printf("Get dict info failed: %s", buf);
+            gchar *str = g_strdup_printf(_("Get dict info failed: %s"), buf);
             g_free(buf);
             on_error_.emit(str);
             g_free(str);
@@ -1069,7 +1077,7 @@ int StarDictClient::parse_command_getadinfo(STARDICT::Cmd* cmd, gchar *buf)
         int status;
         status = atoi(buf);
         if (status != CODE_OK) {
-            gchar *str = g_strdup_printf("Get ad info failed: %s", buf);
+            gchar *str = g_strdup_printf(_("Get ad info failed: %s"), buf);
             g_free(buf);
             on_error_.emit(str);
             g_free(str);
@@ -1088,25 +1096,32 @@ int StarDictClient::parse_command_getadinfo(STARDICT::Cmd* cmd, gchar *buf)
 
 int StarDictClient::parse_command_maxdictcount(STARDICT::Cmd* cmd, gchar *buf)
 {
-    if (cmd->reading_status == 0) {
-        int status;
-        status = atoi(buf);
-        if (status != CODE_OK) {
-            gchar *str = g_strdup_printf("Get max dict count failed: %s", buf);
-            g_free(buf);
-            on_error_.emit(str);
-            g_free(str);
-            return 0;
-        }
-        g_free(buf);
-        cmd->reading_status = 1;
-        reading_type_ = READ_STRING;
-    } else if (cmd->reading_status == 1) {
-        on_maxdictcount_end_.emit(atoi(buf));
-        save_cache_str(cmd->data, buf);
-        return 1;
-    }
-    return 2;
+	if (cmd->reading_status == 0) {
+		int status;
+		status = atoi(buf);
+		if (status != CODE_OK) {
+			if (status == CODE_USER_NOT_REGISTER) {
+				on_maxdictcount_end_.emit(0);
+				save_cache_str(cmd->data, g_strdup("0"));
+				g_free(buf);
+				return 1;
+			} else {
+				gchar *str = g_strdup_printf(_("Get max dict count failed: %s"), buf);
+				g_free(buf);
+				on_error_.emit(str);
+				g_free(str);
+				return 0;
+			}
+		}
+		g_free(buf);
+		cmd->reading_status = 1;
+		reading_type_ = READ_STRING;
+	} else if (cmd->reading_status == 1) {
+		on_maxdictcount_end_.emit(atoi(buf));
+		save_cache_str(cmd->data, buf);
+		return 1;
+	}
+	return 2;
 }
 
 int StarDictClient::parse_wordlist(STARDICT::Cmd* cmd, gchar *buf)
