@@ -254,7 +254,10 @@ void PrefsDlg::create_categories_tree(void)
 
   treeview = gtk_tree_view_new_with_model (model);
   g_object_unref (G_OBJECT (model));
+#if GTK_MAJOR_VERSION >= 3
+#else
   gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (treeview), TRUE);
+#endif
 
   categories_tree = treeview;
   categories_tree_model = model;
@@ -1046,7 +1049,7 @@ void PrefsDlg::setup_dictionary_sound_page()
 	gtk_widget_set_size_request(comboboxentry, 30, -1);
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(comboboxentry), "echo %s | festival --tts &");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(comboboxentry), "espeak %s &");
-    gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(comboboxentry), "flite -t %s &");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(comboboxentry), "flite -t %s &");
 	eTTSCommandline = GTK_ENTRY(gtk_bin_get_child(GTK_BIN(comboboxentry)));
 	const std::string &tts_program_cmdline = conf->get_string("/apps/stardict/preferences/dictionary/tts_program_cmdline");
 	gtk_entry_set_text(eTTSCommandline, tts_program_cmdline.c_str());
@@ -1286,7 +1289,6 @@ void PrefsDlg::on_setup_network_changepassword_button_clicked(GtkWidget *widget,
         	struct MD5Context ctx;
         	unsigned char digest[16];
         	MD5Init(&ctx);
-        	MD5Update(&ctx, (const unsigned char*)"StarDict", 8); //StarDict-Protocol 0.4, add md5 salt.
         	MD5Update(&ctx, (const unsigned char*)corrent_password, strlen(corrent_password));
         	MD5Final(digest, &ctx );
         	for (int i = 0; i < 16; i++)
@@ -1312,7 +1314,6 @@ void PrefsDlg::on_setup_network_changepassword_button_clicked(GtkWidget *widget,
         struct MD5Context ctx;
         unsigned char digest[16];
         MD5Init(&ctx);
-        MD5Update(&ctx, (const unsigned char*)"StarDict", 8); //StarDict-Protocol 0.4, add md5 salt.
         MD5Update(&ctx, (const unsigned char*)new_password, strlen(new_password));
         MD5Final(digest, &ctx );
         char hex2[33];
@@ -2007,14 +2008,22 @@ void PrefsDlg::on_setup_mainwin_searchwebsite_add_button_clicked(GtkWidget *widg
 		const gchar *website_name = gtk_entry_get_text(GTK_ENTRY(searchwebsite_add_dialog_name_entry));
 		const gchar *website_link = gtk_entry_get_text(GTK_ENTRY(searchwebsite_add_dialog_link_entry));
 		const gchar *website_searchlink = gtk_entry_get_text(GTK_ENTRY(searchwebsite_add_dialog_searchlink_entry));
-		if (!website_name[0])
+		if (!website_name[0]) {
 			error_msg = _("Please input the website name.");
-		else if (!website_link[0])
+		} else if (!website_link[0]) {
 			error_msg = _("Please input the website link.");
-		else if (!website_searchlink[0])
+		} else if (!website_searchlink[0]) {
 			error_msg = _("Please input the website search link.");
-		else if (!strstr(website_searchlink, "%s")) {
-			error_msg = _("The website search link should contain a \"%s\" string for querying a word.");
+		} else {
+			const gchar *p;
+			p = strstr(website_searchlink, "%s");
+			if (p) {
+				if (strchr(p+2, '%')) {
+					error_msg = _("The website search link contain more than 1 \"%\" characters!");
+				}
+			} else {
+				error_msg = _("The website search link should contain a \"%s\" string for querying a word.");
+			}
 		}
 
 		if (error_msg) {
@@ -2168,7 +2177,10 @@ void PrefsDlg::setup_mainwin_searchwebsite_page()
 
 	searchwebsite_treeview = gtk_tree_view_new_with_model (GTK_TREE_MODEL(model));
 	g_object_unref (G_OBJECT (model));
+#if GTK_MAJOR_VERSION >= 3
+#else
 	gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (searchwebsite_treeview), TRUE);
+#endif
 
 	GtkTreeSelection *selection;
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (searchwebsite_treeview));
@@ -2341,7 +2353,7 @@ void PrefsDlg::on_setup_floatwin_color_set(GtkColorButton *widget, PrefsDlg *oPr
 {
 #if GTK_MAJOR_VERSION >= 3
 	GdkRGBA color;
-	gtk_color_button_get_rgba(widget, &color);
+	gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(widget), &color);
 	conf->set_double_at("floating_window/bg_red", color.red);
 	conf->set_double_at("floating_window/bg_green", color.green);
 	conf->set_double_at("floating_window/bg_blue", color.blue);
