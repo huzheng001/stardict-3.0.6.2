@@ -52,7 +52,8 @@ IDL_SOURCES = \
 	GNOME_Stardict.h		
 
 STARIDCT_APP_SERVER = \
-	stardict-application-server.cpp stardict-application-server.h
+	stardict-application-server.cpp \
+	stardict-application-server.h
 endif
 
 if !DARWIN_SUPPORT
