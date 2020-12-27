@@ -26,7 +26,7 @@
 #include <windows.h>
 #endif
 
-static const int my_version_num = 30006002; // As 3,00,06,002, so the version is 3.0.6.2
+static const int my_version_num = 30006003; // As 3,00,06,003, so the version is 3.0.6.3
 static int latest_version_num;
 static int last_prompt_num;
 static std::string version_msg_title;

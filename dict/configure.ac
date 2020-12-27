@@ -2,7 +2,7 @@ dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.52)
 
-AC_INIT([StarDict], 3.0.6.2, [http://stardict-4.sourceforge.net])
+AC_INIT([StarDict], 3.0.6.3, [http://stardict-4.sourceforge.net])
 AC_CONFIG_SRCDIR(src/stardict.cpp)
 AC_CONFIG_AUX_DIR([.])
 AM_INIT_AUTOMAKE([1.9 tar-ustar dist-xz])
