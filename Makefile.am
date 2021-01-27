@@ -10,4 +10,5 @@ SUBDIRS = lib $(DICT_SUBDIR) $(TOOLS_SUBDIR)
 
 EXTRA_DIST = \
 	BUGS	\
+    README.md \
 	autogen.sh
