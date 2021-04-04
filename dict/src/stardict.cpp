@@ -274,7 +274,9 @@ void AppCore::Create(const gchar *queryword)
 	window = hildon_window_new();
 	hildon_program_add_window(program, HILDON_WINDOW(window));
 #else
+#if defined(CONFIG_GNOME)
 	window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+#endif
 #endif
 
 // Init oStarDictPlugins after we get window.
@@ -284,7 +286,7 @@ void AppCore::Create(const gchar *queryword)
 	oStarDictPluginSystemService.show_url = show_url;
 	oStarDictPluginSystemService.set_news = set_news;
 	oStarDictPluginSystemService.encode_uri_string = common_encode_uri_string;
-    oStarDictPluginSystemService.build_dictdata = common_build_dictdata;
+	oStarDictPluginSystemService.build_dictdata = common_build_dictdata;
 	oStarDictPluginSystemService.netdict_save_cache_resp = netdict_save_cache_resp;
 	oStarDictPluginSystemService.show_netdict_resp = show_netdict_resp;
 	oStarDictPluginSystemService.lookup_dict = lookup_dict;
@@ -2096,13 +2098,18 @@ void AppCore::Init(const gchar *queryword)
 	Create(queryword);
 
 #ifdef CONFIG_GNOME
-  stardict_app_server =
-    stardict_application_server_new(gdk_screen_get_default());
+#if GTK_MAJOR_VERSION >= 3
+  stardict_app_server = stardict_application_server_new(NULL);
+#else
+  stardict_app_server = stardict_application_server_new(gdk_screen_get_default());
+#endif
 #endif
 
 	stardict_splash.on_mainwin_finish();
 	oStarDictPlugins->MiscPlugins.on_mainwin_finish();
+#ifdef CONFIG_GNOME
 	gtk_main();
+#endif
 }
 
 void AppCore::Quit()
@@ -2123,7 +2130,9 @@ void AppCore::Quit()
 #endif
 	unlock_keys.reset(0);
 	conf.reset(0);
+#ifdef CONFIG_GNOME
 	gtk_main_quit();
+#endif
 }
 
 void AppCore::on_main_win_hide_list_changed(const baseconfval* hideval)
@@ -2334,6 +2343,15 @@ void synchronize_crt_enviroment(void)
 }
 #endif
 
+#if defined(CONFIG_GNOME)
+#else
+static void activateMe(GtkApplication *app, const char *query_word) {
+    GtkWidget *app_window = gtk_application_window_new(app);
+    gpAppFrame->window = app_window;
+    gpAppFrame->Init(query_word);
+}
+#endif
+
 #ifdef _WIN32
 DLLIMPORT int stardict_main(HINSTANCE hInstance, int argc, char **argv)
 #else
@@ -2449,7 +2467,16 @@ int main(int argc,char **argv)
 	g_debug(_("StarDict configuration loaded."));
 	AppCore oAppCore;
 	gpAppFrame = &oAppCore;
+#if defined(CONFIG_GNOME)
 	oAppCore.Init(query_word);
-
 	return EXIT_SUCCESS;
+#else
+    GtkApplication *app;
+    app = gtk_application_new("com.app.stardict", G_APPLICATION_FLAGS_NONE);
+    g_signal_connect(app, "activate", G_CALLBACK(activateMe), (gpointer) query_word);
+    int status;
+    status = g_application_run(G_APPLICATION(app), argc, argv);
+    g_object_unref(app);
+    return status;
+#endif
 }
