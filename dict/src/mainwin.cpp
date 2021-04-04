@@ -110,7 +110,11 @@ void TopWin::Create(GtkWidget *vbox)
 	WordCombo = gtk_combo_box_new_with_model_and_entry(GTK_TREE_MODEL(list_store));
 	gtk_combo_box_set_entry_text_column(GTK_COMBO_BOX(WordCombo), 0);
 	g_object_unref (G_OBJECT(list_store));
+#if GTK_MAJOR_VERSION >= 3
+	gtk_widget_set_focus_on_click(GTK_WIDGET(engine_combobox), FALSE);
+#else
 	gtk_combo_box_set_focus_on_click(GTK_COMBO_BOX(WordCombo), FALSE);
+#endif
 	gtk_container_forall(GTK_CONTAINER(WordCombo), unfocus_combo_arrow, this);
 	gtk_widget_set_size_request(WordCombo,60,-1);
 	gtk_widget_show(WordCombo);
@@ -2678,7 +2682,11 @@ void TransWin::Create(GtkWidget *notebook)
 	renderer = gtk_cell_renderer_text_new ();
 	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (engine_combobox), renderer, TRUE);
 	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (engine_combobox), renderer, "text", 0, NULL);
+#if GTK_MAJOR_VERSION >= 3
+	gtk_widget_set_focus_on_click(GTK_WIDGET(engine_combobox), FALSE);
+#else
 	gtk_combo_box_set_focus_on_click(GTK_COMBO_BOX(engine_combobox), FALSE);
+#endif
 	gtk_box_pack_start(GTK_BOX(hbox), engine_combobox, false, false, 0);
 	label = gtk_label_new(":");
 	gtk_box_pack_start(GTK_BOX(hbox), label, false, false, 0);
@@ -2686,7 +2694,11 @@ void TransWin::Create(GtkWidget *notebook)
 	renderer = gtk_cell_renderer_text_new ();
 	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (fromlang_combobox), renderer, TRUE);
 	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (fromlang_combobox), renderer, "text", 0, NULL);
+#if GTK_MAJOR_VERSION >= 3
+	gtk_widget_set_focus_on_click(GTK_WIDGET(engine_combobox), FALSE);
+#else
 	gtk_combo_box_set_focus_on_click(GTK_COMBO_BOX(fromlang_combobox), FALSE);
+#endif
 	gtk_box_pack_start(GTK_BOX(hbox), fromlang_combobox, false, false, 0);
 	label = gtk_label_new(_("To"));
 	gtk_box_pack_start(GTK_BOX(hbox), label, false, false, 0);
@@ -2694,7 +2706,11 @@ void TransWin::Create(GtkWidget *notebook)
 	renderer = gtk_cell_renderer_text_new ();
 	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (tolang_combobox), renderer, TRUE);
 	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (tolang_combobox), renderer, "text", 0, NULL);
+#if GTK_MAJOR_VERSION >= 3
+	gtk_widget_set_focus_on_click(GTK_WIDGET(engine_combobox), FALSE);
+#else
 	gtk_combo_box_set_focus_on_click(GTK_COMBO_BOX(tolang_combobox), FALSE);
+#endif
 	gtk_box_pack_start(GTK_BOX(hbox), tolang_combobox, false, false, 0);
 	SetEngine(conf->get_int_at("translate/engine"));
 	SetFromLang(true, conf->get_int_at("translate/fromlang"));
@@ -2735,9 +2751,9 @@ void TransWin::Create(GtkWidget *notebook)
 	g_signal_connect(G_OBJECT(trans_button),"clicked", G_CALLBACK(on_translate_button_clicked), this);
 	gtk_box_pack_start(GTK_BOX(hbox), trans_button, false, false, 0);
 
-    GtkWidget *clear_button = gtk_button_new_from_stock(GTK_STOCK_CLEAR);
-    g_signal_connect(G_OBJECT(clear_button),"clicked", G_CALLBACK(on_clear_button_clicked), this);
-    gtk_box_pack_start(GTK_BOX(hbox), clear_button, false, false, 5);
+	GtkWidget *clear_button = gtk_button_new_from_stock(GTK_STOCK_CLEAR);
+	g_signal_connect(G_OBJECT(clear_button),"clicked", G_CALLBACK(on_clear_button_clicked), this);
+	gtk_box_pack_start(GTK_BOX(hbox), clear_button, false, false, 5);
 
 	result_textview = gtk_text_view_new();
 	gtk_text_view_set_editable(GTK_TEXT_VIEW(result_textview), FALSE);
@@ -2858,12 +2874,12 @@ void TransWin::on_translate_button_clicked(GtkWidget *widget, TransWin *oTransWi
 
 void TransWin::on_clear_button_clicked(GtkWidget *widget, TransWin *oTransWin)
 {
-    GtkTextBuffer* buffer;
-    buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(oTransWin->input_textview));
-    gtk_text_buffer_set_text(buffer, "", -1);
-    buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(oTransWin->result_textview));
-    gtk_text_buffer_set_text(buffer, "", -1);
-    gtk_widget_grab_focus(oTransWin->input_textview);
+	GtkTextBuffer* buffer;
+	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(oTransWin->input_textview));
+	gtk_text_buffer_set_text(buffer, "", -1);
+	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(oTransWin->result_textview));
+	gtk_text_buffer_set_text(buffer, "", -1);
+	gtk_widget_grab_focus(oTransWin->input_textview);
 }
 
 void TransWin::on_destroy(GtkWidget *object, TransWin* oTransWin)
@@ -2980,7 +2996,7 @@ void BottomWin::Create(GtkWidget *vbox)
 	ScanSelectionCheckButton = gtk_check_button_new_with_mnemonic(_("_Scan"));
 	gtk_widget_show(ScanSelectionCheckButton);
 	gtk_widget_set_can_focus (ScanSelectionCheckButton, FALSE);
-  bool scan=conf->get_bool_at("dictionary/scan_selection");
+	bool scan=conf->get_bool_at("dictionary/scan_selection");
 
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ScanSelectionCheckButton), scan);
 	g_signal_connect(G_OBJECT(ScanSelectionCheckButton), "toggled",
@@ -3233,8 +3249,7 @@ void BottomWin::set_news(const char *news, const char *links)
 void BottomWin::ScanCallback(GtkToggleButton *button, gpointer data)
 {
 	bool scan_selection=gtk_toggle_button_get_active(button);
-  conf->set_bool_at("dictionary/scan_selection",
-									scan_selection);
+	conf->set_bool_at("dictionary/scan_selection", scan_selection);
 }
 
 void BottomWin::AboutCallback(GtkButton *button, gpointer data)
