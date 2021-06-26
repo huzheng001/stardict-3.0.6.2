@@ -18,8 +18,7 @@ EXTRA_DIST = \
 	omf.make		\
 	intltool-extract.in 	\
 	intltool-merge.in 	\
-	intltool-update.in	\
-	gnome-doc-utils.make
+	intltool-update.in
 
 DISTCHECK_CONFIGURE_FLAGS = --disable-scrollkeeper --disable-schemas-install
 DISTCLEANFILES = intltool-extract intltool-merge intltool-update
