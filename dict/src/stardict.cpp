@@ -2386,8 +2386,11 @@ int main(int argc,char **argv)
 #if defined(_WIN32) && defined(_MSC_VER)
 	synchronize_crt_enviroment();
 #endif
+#if GTK_MAJOR_VERSION >= 3
+#else
 #if defined(_WIN32) || defined(CONFIG_GTK) || defined(CONFIG_GNOME) || defined(CONFIG_MAEMO) || defined(CONFIG_DARWIN)
 	gtk_init(&argc, &argv);
+#endif
 #endif
 	/* Register an interim logger.
 	On Windows, without the logger all output produced by g_option_context_parse will be lost.
