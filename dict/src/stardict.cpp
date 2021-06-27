@@ -274,7 +274,10 @@ void AppCore::Create(const gchar *queryword)
 	window = hildon_window_new();
 	hildon_program_add_window(program, HILDON_WINDOW(window));
 #else
+#if GTK_MAJOR_VERSION >= 3
+#else
 	window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+#endif
 #endif
 
 // Init oStarDictPlugins after we get window.
@@ -2117,7 +2120,10 @@ void AppCore::Init(const gchar *queryword)
 
 	stardict_splash.on_mainwin_finish();
 	oStarDictPlugins->MiscPlugins.on_mainwin_finish();
+#if GTK_MAJOR_VERSION >= 3
+#else
 	gtk_main();
+#endif
 }
 
 void AppCore::Quit()
@@ -2352,6 +2358,14 @@ void synchronize_crt_enviroment(void)
 }
 #endif
 
+#if GTK_MAJOR_VERSION >= 3
+static void activateMe(GtkApplication *app, const char *query_word) {
+    GtkWidget *app_window = gtk_application_window_new(app);
+    gpAppFrame->window = app_window;
+    gpAppFrame->Init(query_word);
+}
+#endif
+
 #ifdef _WIN32
 DLLIMPORT int stardict_main(HINSTANCE hInstance, int argc, char **argv)
 #else
@@ -2467,7 +2481,16 @@ int main(int argc,char **argv)
 	g_debug(_("StarDict configuration loaded."));
 	AppCore oAppCore;
 	gpAppFrame = &oAppCore;
+#if GTK_MAJOR_VERSION >= 3
+    GtkApplication *app;
+    app = gtk_application_new("com.app.stardict", G_APPLICATION_FLAGS_NONE);
+    g_signal_connect(app, "activate", G_CALLBACK(activateMe), (gpointer) query_word);
+    int status;
+    status = g_application_run(G_APPLICATION(app), argc, argv);
+    g_object_unref(app);
+    return status;
+#else
 	oAppCore.Init(query_word);
-
 	return EXIT_SUCCESS;
+#endif
 }
