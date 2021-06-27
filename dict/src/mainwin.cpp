@@ -22,12 +22,14 @@
 #include <glib/gstdio.h>
 #include <glib/gi18n.h>
 #include <gdk/gdkkeysyms.h>
-#include <algorithm>
 
 #ifdef _WIN32
 #define VERSION "3.0.6.3"
 #  include <gdk/gdkwin32.h>
 #endif
+
+#include <list>
+#include <algorithm>
 
 #include "conf.h"
 #include "desktop.h"

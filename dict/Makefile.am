@@ -4,6 +4,7 @@ SUBDIRS = m4 src stardict-plugins tests pixmaps po help data doc \
     debian-upstream \
     mac_dist \
     msvc_2008
+
 ACLOCAL_AMFLAGS = -I m4
 
 EXTRA_DIST = \
